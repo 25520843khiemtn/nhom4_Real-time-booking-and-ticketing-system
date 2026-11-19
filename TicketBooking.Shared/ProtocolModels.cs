@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
@@ -93,11 +94,52 @@ namespace TicketBooking.Shared
         public string FullName { get; set; }
     }
 
+    public class MovieModel
+    {
+        public int MovieId { get; set; }
+        public string Title { get; set; }
+        public int DurationMinutes { get; set; }
+        public string Genre { get; set; }
+    }
+
+    public class ShowtimeModel
+    {
+        public int ShowtimeId { get; set; }
+        public int MovieId { get; set; }
+        public string RoomName { get; set; }
+        public DateTime StartTime { get; set; }
+        public decimal TicketPrice { get; set; }
+    }
+
     public class SeatModel
     {
+        public int ShowtimeId { get; set; }
         public string SeatId { get; set; }
         public SeatStatus Status { get; set; }
         public string LockedBy { get; set; }
         public DateTime? UnlockTime { get; set; }
+    }
+
+    public class GetShowtimesPayload
+    {
+        public int MovieId { get; set; }
+    }
+
+    public class GetSeatsPayload
+    {
+        public int ShowtimeId { get; set; }
+    }
+
+    public class SeatActionPayload
+    {
+        public int ShowtimeId { get; set; }
+        public string SeatId { get; set; }
+    }
+
+    public class SeatUpdatedPayload
+    {
+        public int ShowtimeId { get; set; }
+        public SeatModel Seat { get; set; }
+        public string Reason { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using TicketBooking.Shared;
 
@@ -6,10 +7,12 @@ namespace TicketBooking.Server
 {
     public class RequestHandler
     {
+        private readonly BookingService _bookingService;
         private readonly Action<string> _log;
 
-        public RequestHandler(Action<string> logCallback)
+        public RequestHandler(BookingService bookingService, Action<string> logCallback)
         {
+            _bookingService = bookingService;
             _log = logCallback;
         }
 
@@ -51,7 +54,6 @@ namespace TicketBooking.Server
             switch (req.MessageType)
             {
                 case MessageTypes.PING:
-                    _log($"[{session.EndPoint}] PING -> PONG");
                     return ProtocolMessage.CreateResponse(
                         MessageTypes.PING,
                         req.RequestId,
@@ -61,115 +63,189 @@ namespace TicketBooking.Server
                     );
 
                 case MessageTypes.LOGIN:
-                    return HandleLoginFrame(req, session);
+                    return HandleLogin(req, session);
 
                 case MessageTypes.REGISTER:
-                    return HandleRegisterFrame(req, session);
+                    return HandleRegister(req, session);
+
+                case MessageTypes.GET_MOVIES:
+                    List<MovieModel> movies = _bookingService.GetMovies();
+                    return ProtocolMessage.CreateResponse(
+                        MessageTypes.GET_MOVIES,
+                        req.RequestId,
+                        ResponseStatus.SUCCESS,
+                        movies,
+                        session.UserId ?? req.UserId
+                    );
+
+                case MessageTypes.GET_SHOWTIMES:
+                    GetShowtimesPayload showReq = req.GetData<GetShowtimesPayload>();
+                    if (showReq == null)
+                    {
+                        return ProtocolMessage.CreateResponse(MessageTypes.GET_SHOWTIMES, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu MovieId." });
+                    }
+                    List<ShowtimeModel> showtimes = _bookingService.GetShowtimes(showReq.MovieId);
+                    return ProtocolMessage.CreateResponse(
+                        MessageTypes.GET_SHOWTIMES,
+                        req.RequestId,
+                        ResponseStatus.SUCCESS,
+                        showtimes,
+                        session.UserId ?? req.UserId
+                    );
+
+                case MessageTypes.GET_SEATS:
+                    GetSeatsPayload seatReq = req.GetData<GetSeatsPayload>();
+                    if (seatReq == null)
+                    {
+                        return ProtocolMessage.CreateResponse(MessageTypes.GET_SEATS, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu ShowtimeId." });
+                    }
+                    List<SeatModel> seats = _bookingService.GetSeats(seatReq.ShowtimeId);
+                    return ProtocolMessage.CreateResponse(
+                        MessageTypes.GET_SEATS,
+                        req.RequestId,
+                        ResponseStatus.SUCCESS,
+                        seats,
+                        session.UserId ?? req.UserId
+                    );
+
+                case MessageTypes.HOLD_SEAT:
+                    return HandleHoldSeat(req, session);
+
+                case MessageTypes.CANCEL_HOLD:
+                    return HandleCancelHold(req, session);
 
                 default:
-                    _log($"[{session.EndPoint}] Yêu cầu chưa triển khai ở Giai đoạn 1: {req.MessageType}");
                     return ProtocolMessage.CreateResponse(
                         req.MessageType,
                         req.RequestId,
                         ResponseStatus.ERROR,
-                        new { Message = $"Chức năng {req.MessageType} sẽ được mở ở Giai đoạn 2." },
-                        req.UserId
+                        new { Message = $"Chức năng {req.MessageType} sẽ được triển khai ở Giai đoạn 3." },
+                        session.UserId ?? req.UserId
                     );
             }
         }
 
-        private ProtocolMessage HandleLoginFrame(ProtocolMessage req, ClientSession session)
+        private ProtocolMessage HandleLogin(ProtocolMessage req, ClientSession session)
         {
             LoginPayload login = req.GetData<LoginPayload>();
             if (login == null || string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.Password))
             {
-                return ProtocolMessage.CreateResponse(
-                    MessageTypes.LOGIN,
-                    req.RequestId,
-                    ResponseStatus.ERROR,
-                    new { Message = "Thiếu thông tin đăng nhập." }
-                );
+                return ProtocolMessage.CreateResponse(MessageTypes.LOGIN, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu thông tin đăng nhập." });
             }
 
+            string decodedPassword;
             try
             {
-                string decodedPassword = Base64Helper.Decode(login.Password);
-                if (string.IsNullOrWhiteSpace(decodedPassword))
-                {
-                    return ProtocolMessage.CreateResponse(
-                        MessageTypes.LOGIN,
-                        req.RequestId,
-                        ResponseStatus.ERROR,
-                        new { Message = "Mật khẩu giải mã rỗng." }
-                    );
-                }
+                decodedPassword = Base64Helper.Decode(login.Password);
             }
             catch (FormatException)
             {
-                _log($"[{session.EndPoint}] Lỗi giải mã Base64 ở gói tin LOGIN.");
-                return ProtocolMessage.CreateResponse(
-                    MessageTypes.LOGIN,
-                    req.RequestId,
-                    ResponseStatus.ERROR,
-                    new { Message = "Dữ liệu đăng nhập không đúng định dạng Base64." }
-                );
+                return ProtocolMessage.CreateResponse(MessageTypes.LOGIN, req.RequestId, ResponseStatus.ERROR, new { Message = "Mật khẩu không đúng định dạng Base64." });
             }
 
-            session.UserId = login.Username;
-            _log($"[{session.EndPoint}] Đăng nhập khung thành công: User = {login.Username}");
+            string validUserId;
+            if (!_bookingService.Login(login.Username, decodedPassword, out validUserId))
+            {
+                _log($"[{session.EndPoint}] Đăng nhập thất bại cho tài khoản '{login.Username}'.");
+                return ProtocolMessage.CreateResponse(MessageTypes.LOGIN, req.RequestId, ResponseStatus.ERROR, new { Message = "Sai tên đăng nhập hoặc mật khẩu." });
+            }
+
+            session.UserId = validUserId;
+            _log($"[{session.EndPoint}] Đăng nhập thành công: User = {validUserId}");
             return ProtocolMessage.CreateResponse(
                 MessageTypes.LOGIN,
                 req.RequestId,
                 ResponseStatus.SUCCESS,
-                new { Message = "Đăng nhập thành công (Chế độ khung Tuần 3)", Username = login.Username },
-                login.Username
+                new { Message = "Đăng nhập thành công.", UserId = validUserId },
+                validUserId
             );
         }
 
-        private ProtocolMessage HandleRegisterFrame(ProtocolMessage req, ClientSession session)
+        private ProtocolMessage HandleRegister(ProtocolMessage req, ClientSession session)
         {
             RegisterPayload reg = req.GetData<RegisterPayload>();
             if (reg == null || string.IsNullOrWhiteSpace(reg.Username) || string.IsNullOrWhiteSpace(reg.Password))
             {
-                return ProtocolMessage.CreateResponse(
-                    MessageTypes.REGISTER,
-                    req.RequestId,
-                    ResponseStatus.ERROR,
-                    new { Message = "Thiếu thông tin đăng ký." }
-                );
+                return ProtocolMessage.CreateResponse(MessageTypes.REGISTER, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu thông tin đăng ký." });
             }
 
+            string decodedPassword;
             try
             {
-                string decodedPassword = Base64Helper.Decode(reg.Password);
-                if (string.IsNullOrWhiteSpace(decodedPassword))
-                {
-                    return ProtocolMessage.CreateResponse(
-                        MessageTypes.REGISTER,
-                        req.RequestId,
-                        ResponseStatus.ERROR,
-                        new { Message = "Mật khẩu đăng ký giải mã rỗng." }
-                    );
-                }
+                decodedPassword = Base64Helper.Decode(reg.Password);
             }
             catch (FormatException)
             {
-                _log($"[{session.EndPoint}] Lỗi giải mã Base64 ở gói tin REGISTER.");
-                return ProtocolMessage.CreateResponse(
-                    MessageTypes.REGISTER,
-                    req.RequestId,
-                    ResponseStatus.ERROR,
-                    new { Message = "Dữ liệu đăng ký không đúng định dạng Base64." }
-                );
+                return ProtocolMessage.CreateResponse(MessageTypes.REGISTER, req.RequestId, ResponseStatus.ERROR, new { Message = "Mật khẩu đăng ký không đúng định dạng Base64." });
             }
 
-            _log($"[{session.EndPoint}] Đăng ký khung hợp lệ: User = {reg.Username}");
+            string errorMsg;
+            if (!_bookingService.Register(reg.Username, decodedPassword, reg.FullName, out errorMsg))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.REGISTER, req.RequestId, ResponseStatus.ERROR, new { Message = errorMsg });
+            }
+
+            _log($"[{session.EndPoint}] Đăng ký tài khoản mới thành công: User = {reg.Username}");
             return ProtocolMessage.CreateResponse(
                 MessageTypes.REGISTER,
                 req.RequestId,
                 ResponseStatus.SUCCESS,
-                new { Message = "Đăng ký hợp lệ (Chế độ khung Tuần 3)", Username = reg.Username },
+                new { Message = "Đăng ký tài khoản thành công.", Username = reg.Username },
                 reg.Username
+            );
+        }
+
+        private ProtocolMessage HandleHoldSeat(ProtocolMessage req, ClientSession session)
+        {
+            string activeUser = !string.IsNullOrWhiteSpace(session.UserId) ? session.UserId : req.UserId;
+            if (string.IsNullOrWhiteSpace(activeUser))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.HOLD_SEAT, req.RequestId, ResponseStatus.ERROR, new { Message = "Vui lòng đăng nhập trước khi giữ ghế." });
+            }
+
+            SeatActionPayload payload = req.GetData<SeatActionPayload>();
+            if (payload == null || string.IsNullOrWhiteSpace(payload.SeatId))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.HOLD_SEAT, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu thông tin suất chiếu hoặc mã ghế." });
+            }
+
+            SeatModel updatedSeat;
+            string message;
+            bool ok = _bookingService.HoldSeat(activeUser, payload.ShowtimeId, payload.SeatId, out updatedSeat, out message);
+
+            return ProtocolMessage.CreateResponse(
+                MessageTypes.HOLD_SEAT,
+                req.RequestId,
+                ok ? ResponseStatus.SUCCESS : ResponseStatus.ERROR,
+                new { Message = message, Seat = updatedSeat },
+                activeUser
+            );
+        }
+
+        private ProtocolMessage HandleCancelHold(ProtocolMessage req, ClientSession session)
+        {
+            string activeUser = !string.IsNullOrWhiteSpace(session.UserId) ? session.UserId : req.UserId;
+            if (string.IsNullOrWhiteSpace(activeUser))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.CANCEL_HOLD, req.RequestId, ResponseStatus.ERROR, new { Message = "Vui lòng đăng nhập." });
+            }
+
+            SeatActionPayload payload = req.GetData<SeatActionPayload>();
+            if (payload == null || string.IsNullOrWhiteSpace(payload.SeatId))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.CANCEL_HOLD, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu thông tin suất chiếu hoặc mã ghế." });
+            }
+
+            SeatModel updatedSeat;
+            string message;
+            bool ok = _bookingService.CancelHold(activeUser, payload.ShowtimeId, payload.SeatId, out updatedSeat, out message);
+
+            return ProtocolMessage.CreateResponse(
+                MessageTypes.CANCEL_HOLD,
+                req.RequestId,
+                ok ? ResponseStatus.SUCCESS : ResponseStatus.ERROR,
+                new { Message = message, Seat = updatedSeat },
+                activeUser
             );
         }
     }
