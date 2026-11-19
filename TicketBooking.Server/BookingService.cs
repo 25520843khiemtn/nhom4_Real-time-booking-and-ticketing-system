@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TicketBooking.Shared;
@@ -13,6 +14,7 @@ namespace TicketBooking.Server
         private readonly Action<string> _log;
 
         // Quy định giữ ghế tối đa 5 phút (300 giây). Có thể chỉnh thành 15 khi chạy test Timeout.
+
         private const int HoldDurationSeconds = 300;
 
         public event Action<SeatUpdatedPayload> OnSeatChanged;
@@ -71,7 +73,6 @@ namespace TicketBooking.Server
                     return false;
                 }
 
-                // Kiểm tra nếu ghế đang giữ nhưng đã quá hạn mà luồng quét chưa kịp chạy
                 if (seat.Status == SeatStatus.Held && seat.UnlockTime.HasValue && seat.UnlockTime.Value <= DateTime.Now)
                 {
                     seat.Status = SeatStatus.Available;
@@ -87,14 +88,9 @@ namespace TicketBooking.Server
 
                 if (seat.Status == SeatStatus.Held)
                 {
-                    if (seat.LockedBy == userId)
-                    {
-                        message = $"Bạn đang giữ ghế {seat.SeatId} rồi.";
-                    }
-                    else
-                    {
-                        message = $"Ghế {seat.SeatId} đang được người dùng khác giữ.";
-                    }
+                    message = seat.LockedBy == userId
+                        ? $"Bạn đang giữ ghế {seat.SeatId} rồi."
+                        : $"Ghế {seat.SeatId} đang được người dùng khác giữ.";
                     return false;
                 }
 
@@ -175,6 +171,121 @@ namespace TicketBooking.Server
             return true;
         }
 
+        public bool BuyTickets(string userId, int showtimeId, List<string> rawSeatIds, out TransactionModel transaction, out List<SeatModel> soldSeats, out string message)
+        {
+            transaction = null;
+            soldSeats = new List<SeatModel>();
+            List<SeatUpdatedPayload> broadcasts = new List<SeatUpdatedPayload>();
+
+            if (rawSeatIds == null || rawSeatIds.Count == 0)
+            {
+                message = "Danh sách ghế thanh toán đang trống.";
+                return false;
+            }
+
+            List<string> distinctSeatIds = rawSeatIds
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim().ToUpper())
+                .Distinct()
+                .ToList();
+
+            lock (_seatLock)
+            {
+                ShowtimeModel showtime = _repo.GetShowtimeById(showtimeId);
+                if (showtime == null)
+                {
+                    message = $"Suất chiếu {showtimeId} không tồn tại.";
+                    _log($"[BUY_ERROR] User '{userId}' mua vé thất bại: Suất chiếu {showtimeId} không hợp lệ.");
+                    return false;
+                }
+
+                DateTime now = DateTime.Now;
+                List<SeatUpdatedPayload> expiredBroadcasts = new List<SeatUpdatedPayload>();
+
+                foreach (string seatId in distinctSeatIds)
+                {
+                    SeatModel seat = _repo.GetSeat(showtimeId, seatId);
+                    if (seat == null)
+                    {
+                        message = $"Ghế {seatId} không tồn tại.";
+                        _log($"[BUY_ERROR] User '{userId}' mua ghế không tồn tại ({seatId}).");
+                        return false;
+                    }
+
+                    if (seat.Status == SeatStatus.Sold)
+                    {
+                        message = $"Ghế {seat.SeatId} đã có người mua trước đó.";
+                        _log($"[BUY_ERROR] User '{userId}' cố mua ghế đã bán ({seat.SeatId}).");
+                        return false;
+                    }
+
+                    if (seat.Status != SeatStatus.Held || seat.LockedBy != userId)
+                    {
+                        message = $"Ghế {seat.SeatId} chưa được bạn giữ hoặc đang bị người khác giữ.";
+                        _log($"[BUY_ERROR] User '{userId}' không phải người giữ ghế {seat.SeatId}.");
+                        return false;
+                    }
+
+                    if (!seat.UnlockTime.HasValue || seat.UnlockTime.Value <= now)
+                    {
+                        seat.Status = SeatStatus.Available;
+                        seat.LockedBy = null;
+                        seat.UnlockTime = null;
+                        _repo.SaveSeatState(seat);
+
+                        expiredBroadcasts.Add(new SeatUpdatedPayload
+                        {
+                            ShowtimeId = showtimeId,
+                            Seat = CloneSeat(seat),
+                            Reason = "TIMEOUT"
+                        });
+
+                        message = $"Ghế {seat.SeatId} đã hết thời gian giữ 5 phút. Vui lòng chọn lại.";
+                        _log($"[BUY_ERROR] User '{userId}' thanh toán trễ hạn ghế {seat.SeatId}.");
+
+                        foreach (var exp in expiredBroadcasts) OnSeatChanged?.Invoke(exp);
+                        return false;
+                    }
+                }
+
+                string txError;
+                bool committed = _repo.ExecuteBuyTransaction(userId, showtimeId, distinctSeatIds, showtime.TicketPrice, out transaction, out txError);
+                if (!committed)
+                {
+                    message = txError ?? "Giao dịch mua vé thất bại, dữ liệu đã được hoàn tác.";
+                    _log($"[BUY_ROLLBACK] Giao dịch của '{userId}' thất bại: {message}");
+                    return false;
+                }
+
+                foreach (string seatId in distinctSeatIds)
+                {
+                    SeatModel updated = CloneSeat(_repo.GetSeat(showtimeId, seatId));
+                    soldSeats.Add(updated);
+                    broadcasts.Add(new SeatUpdatedPayload
+                    {
+                        ShowtimeId = showtimeId,
+                        Seat = updated,
+                        Reason = "SOLD"
+                    });
+                }
+
+                _log($"[BUY_SUCCESS] User '{userId}' mua thành công {soldSeats.Count} vé ({string.Join(", ", distinctSeatIds)}) - Mã GD #{transaction.TransactionId} - Tổng: {transaction.TotalPrice:N0}đ.");
+            }
+
+            foreach (SeatUpdatedPayload item in broadcasts)
+            {
+                OnSeatChanged?.Invoke(item);
+            }
+
+            message = $"Thanh toán thành công {soldSeats.Count} vé (Mã GD: #{transaction.TransactionId}).";
+            return true;
+        }
+
+        public List<TransactionModel> GetUserHistory(string userId)
+        {
+            return _repo.GetUserTransactions(userId);
+        }
+
         public void ReleaseSeatsByUser(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId)) return;
@@ -185,7 +296,7 @@ namespace TicketBooking.Server
                 List<SeatModel> heldSeats = _repo.GetAllHeldSeats();
                 foreach (SeatModel seat in heldSeats)
                 {
-                    if (seat.LockedBy == userId)
+                    if (seat.Status == SeatStatus.Held && seat.LockedBy == userId)
                     {
                         seat.Status = SeatStatus.Available;
                         seat.LockedBy = null;

@@ -11,6 +11,9 @@ namespace TicketBooking.Server
         private readonly List<MovieModel> _movies = new List<MovieModel>();
         private readonly List<ShowtimeModel> _showtimes = new List<ShowtimeModel>();
         private readonly List<SeatModel> _seats = new List<SeatModel>();
+        private readonly List<TransactionModel> _transactions = new List<TransactionModel>();
+        private int _nextTransactionId = 1000;
+        private int _nextDetailId = 5000;
 
         public InMemoryBookingRepository()
         {
@@ -86,6 +89,11 @@ namespace TicketBooking.Server
             return _showtimes.Where(s => s.MovieId == movieId).ToList();
         }
 
+        public ShowtimeModel GetShowtimeById(int showtimeId)
+        {
+            return _showtimes.FirstOrDefault(s => s.ShowtimeId == showtimeId);
+        }
+
         public List<SeatModel> GetSeats(int showtimeId)
         {
             return _seats.Where(s => s.ShowtimeId == showtimeId).ToList();
@@ -98,12 +106,70 @@ namespace TicketBooking.Server
 
         public void SaveSeatState(SeatModel seat)
         {
-            // Ở bản RAM tham chiếu đã cập nhật trực tiếp; khi chuyển sang SQL sẽ chạy lệnh UPDATE tại đây
         }
 
         public List<SeatModel> GetAllHeldSeats()
         {
             return _seats.Where(s => s.Status == SeatStatus.Held).ToList();
+        }
+
+        public bool ExecuteBuyTransaction(string userId, int showtimeId, List<string> seatIds, decimal unitPrice, out TransactionModel transaction, out string errorMessage)
+        {
+            transaction = null;
+            errorMessage = null;
+
+            List<SeatModel> targetSeats = new List<SeatModel>();
+            foreach (string id in seatIds)
+            {
+                SeatModel seat = GetSeat(showtimeId, id);
+                if (seat == null)
+                {
+                    errorMessage = $"Ghế {id} không tồn tại, giao dịch đã được hoàn tác (Rollback).";
+                    return false;
+                }
+                targetSeats.Add(seat);
+            }
+
+            try
+            {
+                TransactionModel tx = new TransactionModel
+                {
+                    TransactionId = ++_nextTransactionId,
+                    UserId = userId,
+                    ShowtimeId = showtimeId,
+                    BuyTime = DateTime.Now,
+                    TotalPrice = unitPrice * targetSeats.Count
+                };
+
+                foreach (SeatModel seat in targetSeats)
+                {
+                    seat.Status = SeatStatus.Sold;
+                    seat.LockedBy = userId;
+                    seat.UnlockTime = null;
+
+                    tx.Details.Add(new TransactionDetailModel
+                    {
+                        DetailId = ++_nextDetailId,
+                        TransactionId = tx.TransactionId,
+                        SeatId = seat.SeatId,
+                        UnitPrice = unitPrice
+                    });
+                }
+
+                _transactions.Add(tx);
+                transaction = tx;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Lỗi giao dịch: {ex.Message}";
+                return false;
+            }
+        }
+
+        public List<TransactionModel> GetUserTransactions(string userId)
+        {
+            return _transactions.Where(t => t.UserId == userId).OrderByDescending(t => t.BuyTime).ToList();
         }
     }
 }
