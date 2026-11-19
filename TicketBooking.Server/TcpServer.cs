@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using TicketBooking.Shared;
 
 namespace TicketBooking.Server
 {
@@ -13,6 +15,7 @@ namespace TicketBooking.Server
         private TcpListener _listener;
         private CancellationTokenSource _cts;
         private readonly ConnectionManager _connectionManager;
+        private readonly BookingService _bookingService;
         private readonly RequestHandler _requestHandler;
 
         public event Action<string> OnLog;
@@ -21,7 +24,13 @@ namespace TicketBooking.Server
         public TcpServer()
         {
             _connectionManager = new ConnectionManager();
-            _requestHandler = new RequestHandler(WriteLog);
+
+            // Đang dùng dữ liệu mẫu trên RAM. Khi có file SQL của Hạnh chỉ cần thay bằng SqlBookingRepository
+            IBookingRepository repository = new InMemoryBookingRepository();
+            _bookingService = new BookingService(repository, WriteLog);
+            _bookingService.OnSeatChanged += BroadcastSeatUpdate;
+
+            _requestHandler = new RequestHandler(_bookingService, WriteLog);
         }
 
         public void Start(string ipAddress, int port)
@@ -34,8 +43,9 @@ namespace TicketBooking.Server
             _listener = new TcpListener(ip, port);
             _listener.Start();
 
-            WriteLog($"Server đã khởi động tại {ip}:{port}. Đang chờ Client...");
+            WriteLog($"Server Giai đoạn 2 đã khởi động tại {ip}:{port}.");
             Task.Run(() => AcceptLoopAsync(_cts.Token));
+            Task.Run(() => _bookingService.StartTimeoutWatcherAsync(_cts.Token));
         }
 
         public void Stop()
@@ -111,10 +121,27 @@ namespace TicketBooking.Server
             }
             finally
             {
+                if (!string.IsNullOrWhiteSpace(session.UserId))
+                {
+                    _bookingService.ReleaseSeatsByUser(session.UserId);
+                }
+
                 _connectionManager.RemoveClient(session.ConnectionId);
                 OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
                 WriteLog($"Đã đóng phiên làm việc của {session.EndPoint}.");
             }
+        }
+
+        private void BroadcastSeatUpdate(SeatUpdatedPayload payload)
+        {
+            ProtocolMessage broadcastMsg = ProtocolMessage.CreateResponse(
+                MessageTypes.SEAT_UPDATED,
+                Guid.NewGuid().ToString(),
+                ResponseStatus.SUCCESS,
+                payload
+            );
+            string json = JsonConvert.SerializeObject(broadcastMsg);
+            _connectionManager.Broadcast(json);
         }
 
         private void WriteLog(string message)
