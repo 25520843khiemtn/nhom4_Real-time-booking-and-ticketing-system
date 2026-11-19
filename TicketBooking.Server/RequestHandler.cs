@@ -69,12 +69,11 @@ namespace TicketBooking.Server
                     return HandleRegister(req, session);
 
                 case MessageTypes.GET_MOVIES:
-                    List<MovieModel> movies = _bookingService.GetMovies();
                     return ProtocolMessage.CreateResponse(
                         MessageTypes.GET_MOVIES,
                         req.RequestId,
                         ResponseStatus.SUCCESS,
-                        movies,
+                        _bookingService.GetMovies(),
                         session.UserId ?? req.UserId
                     );
 
@@ -84,12 +83,11 @@ namespace TicketBooking.Server
                     {
                         return ProtocolMessage.CreateResponse(MessageTypes.GET_SHOWTIMES, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu MovieId." });
                     }
-                    List<ShowtimeModel> showtimes = _bookingService.GetShowtimes(showReq.MovieId);
                     return ProtocolMessage.CreateResponse(
                         MessageTypes.GET_SHOWTIMES,
                         req.RequestId,
                         ResponseStatus.SUCCESS,
-                        showtimes,
+                        _bookingService.GetShowtimes(showReq.MovieId),
                         session.UserId ?? req.UserId
                     );
 
@@ -99,12 +97,11 @@ namespace TicketBooking.Server
                     {
                         return ProtocolMessage.CreateResponse(MessageTypes.GET_SEATS, req.RequestId, ResponseStatus.ERROR, new { Message = "Thiếu ShowtimeId." });
                     }
-                    List<SeatModel> seats = _bookingService.GetSeats(seatReq.ShowtimeId);
                     return ProtocolMessage.CreateResponse(
                         MessageTypes.GET_SEATS,
                         req.RequestId,
                         ResponseStatus.SUCCESS,
-                        seats,
+                        _bookingService.GetSeats(seatReq.ShowtimeId),
                         session.UserId ?? req.UserId
                     );
 
@@ -114,12 +111,29 @@ namespace TicketBooking.Server
                 case MessageTypes.CANCEL_HOLD:
                     return HandleCancelHold(req, session);
 
+                case MessageTypes.BUY_TICKET:
+                    return HandleBuyTicket(req, session);
+
+                case MessageTypes.GET_HISTORY:
+                    string historyUser = !string.IsNullOrWhiteSpace(session.UserId) ? session.UserId : req.UserId;
+                    if (string.IsNullOrWhiteSpace(historyUser))
+                    {
+                        return ProtocolMessage.CreateResponse(MessageTypes.GET_HISTORY, req.RequestId, ResponseStatus.ERROR, new { Message = "Vui lòng đăng nhập để xem lịch sử." });
+                    }
+                    return ProtocolMessage.CreateResponse(
+                        MessageTypes.GET_HISTORY,
+                        req.RequestId,
+                        ResponseStatus.SUCCESS,
+                        _bookingService.GetUserHistory(historyUser),
+                        historyUser
+                    );
+
                 default:
                     return ProtocolMessage.CreateResponse(
                         req.MessageType,
                         req.RequestId,
                         ResponseStatus.ERROR,
-                        new { Message = $"Chức năng {req.MessageType} sẽ được triển khai ở Giai đoạn 3." },
+                        new { Message = $"Lệnh không được hỗ trợ: {req.MessageType}" },
                         session.UserId ?? req.UserId
                     );
             }
@@ -245,6 +259,44 @@ namespace TicketBooking.Server
                 req.RequestId,
                 ok ? ResponseStatus.SUCCESS : ResponseStatus.ERROR,
                 new { Message = message, Seat = updatedSeat },
+                activeUser
+            );
+        }
+
+        private ProtocolMessage HandleBuyTicket(ProtocolMessage req, ClientSession session)
+        {
+            string activeUser = !string.IsNullOrWhiteSpace(session.UserId) ? session.UserId : req.UserId;
+            if (string.IsNullOrWhiteSpace(activeUser))
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.BUY_TICKET, req.RequestId, ResponseStatus.ERROR, new { Message = "Vui lòng đăng nhập hợp lệ trước khi thanh toán." });
+            }
+
+            BuyTicketPayload payload = req.GetData<BuyTicketPayload>();
+            if (payload == null)
+            {
+                return ProtocolMessage.CreateResponse(MessageTypes.BUY_TICKET, req.RequestId, ResponseStatus.ERROR, new { Message = "Dữ liệu thanh toán không hợp lệ." });
+            }
+
+            List<string> targetSeats = new List<string>();
+            if (payload.SeatIds != null && payload.SeatIds.Count > 0)
+            {
+                targetSeats.AddRange(payload.SeatIds);
+            }
+            else if (!string.IsNullOrWhiteSpace(payload.SeatId))
+            {
+                targetSeats.Add(payload.SeatId);
+            }
+
+            TransactionModel transaction;
+            List<SeatModel> soldSeats;
+            string message;
+            bool ok = _bookingService.BuyTickets(activeUser, payload.ShowtimeId, targetSeats, out transaction, out soldSeats, out message);
+
+            return ProtocolMessage.CreateResponse(
+                MessageTypes.BUY_TICKET,
+                req.RequestId,
+                ok ? ResponseStatus.SUCCESS : ResponseStatus.ERROR,
+                new { Message = message, Transaction = transaction, Seats = soldSeats },
                 activeUser
             );
         }

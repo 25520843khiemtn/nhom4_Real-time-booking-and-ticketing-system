@@ -16,6 +16,7 @@ namespace TicketBooking.Shared
         public const string HOLD_SEAT = "HOLD_SEAT";
         public const string CANCEL_HOLD = "CANCEL_HOLD";
         public const string BUY_TICKET = "BUY_TICKET";
+        public const string GET_HISTORY = "GET_HISTORY";
         public const string SEAT_UPDATED = "SEAT_UPDATED";
     }
 
@@ -134,6 +135,36 @@ namespace TicketBooking.Shared
     {
         public int ShowtimeId { get; set; }
         public string SeatId { get; set; }
+    }
+
+    public class BuyTicketPayload
+    {
+        public int ShowtimeId { get; set; }
+        public string SeatId { get; set; }
+        public List<string> SeatIds { get; set; }
+    }
+
+    public class TransactionDetailModel
+    {
+        public int DetailId { get; set; }
+        public int TransactionId { get; set; }
+        public string SeatId { get; set; }
+        public decimal UnitPrice { get; set; }
+    }
+
+    public class TransactionModel
+    {
+        public int TransactionId { get; set; }
+        public string UserId { get; set; }
+        public int ShowtimeId { get; set; }
+        public DateTime BuyTime { get; set; }
+        public decimal TotalPrice { get; set; }
+        public List<TransactionDetailModel> Details { get; set; }
+
+        public TransactionModel()
+        {
+            Details = new List<TransactionDetailModel>();
+        }
     }
 
     public class SeatUpdatedPayload
