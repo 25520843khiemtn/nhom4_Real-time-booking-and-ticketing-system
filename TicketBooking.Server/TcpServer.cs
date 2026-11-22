@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +17,7 @@ namespace TicketBooking.Server
     {
         private TcpListener _listener;
         private CancellationTokenSource _cts;
+        private X509Certificate2 _serverCertificate;
         private readonly ConnectionManager _connectionManager;
         private readonly BookingService _bookingService;
         private readonly RequestHandler _requestHandler;
@@ -25,7 +29,6 @@ namespace TicketBooking.Server
         {
             _connectionManager = new ConnectionManager();
 
-            // Đang dùng dữ liệu mẫu trên RAM. Khi có file SQL của Hạnh chỉ cần thay bằng SqlBookingRepository
             IBookingRepository repository = new InMemoryBookingRepository();
             _bookingService = new BookingService(repository, WriteLog);
             _bookingService.OnSeatChanged += BroadcastSeatUpdate;
@@ -33,8 +36,15 @@ namespace TicketBooking.Server
             _requestHandler = new RequestHandler(_bookingService, WriteLog);
         }
 
-        public void Start(string ipAddress, int port)
+        public void Start(string ipAddress, int port, string certPath = "server.pfx", string certPassword = "123456")
         {
+            if (!File.Exists(certPath))
+            {
+                throw new FileNotFoundException($"Không tìm thấy file chứng chỉ TLS tại: {Path.GetFullPath(certPath)}");
+            }
+
+            _serverCertificate = new X509Certificate2(certPath, certPassword);
+
             IPAddress ip = string.IsNullOrWhiteSpace(ipAddress) || ipAddress == "0.0.0.0"
                 ? IPAddress.Any
                 : IPAddress.Parse(ipAddress);
@@ -43,7 +53,7 @@ namespace TicketBooking.Server
             _listener = new TcpListener(ip, port);
             _listener.Start();
 
-            WriteLog($"Server Giai đoạn 2 đã khởi động tại {ip}:{port}.");
+            WriteLog($"Server TLS 1.2 đã khởi động tại {ip}:{port}.");
             Task.Run(() => AcceptLoopAsync(_cts.Token));
             Task.Run(() => _bookingService.StartTimeoutWatcherAsync(_cts.Token));
         }
@@ -64,12 +74,7 @@ namespace TicketBooking.Server
                 try
                 {
                     TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
-                    ClientSession session = _connectionManager.AddClient(tcpClient);
-
-                    WriteLog($"Client kết nối: {session.EndPoint} (ID: {session.ConnectionId})");
-                    OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
-
-                    _ = Task.Run(() => HandleClientAsync(session, token));
+                    _ = Task.Run(() => HandleClientAsync(tcpClient, token));
                 }
                 catch when (token.IsCancellationRequested)
                 {
@@ -86,14 +91,28 @@ namespace TicketBooking.Server
             }
         }
 
-        private async Task HandleClientAsync(ClientSession session, CancellationToken token)
+        private async Task HandleClientAsync(TcpClient tcpClient, CancellationToken token)
         {
+            ClientSession session = null;
+            string remoteEndPoint = tcpClient.Client.RemoteEndPoint?.ToString() ?? "Unknown";
+
             try
             {
-                NetworkStream stream = session.Client.GetStream();
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                SslStream sslStream = new SslStream(tcpClient.GetStream(), false);
+                await sslStream.AuthenticateAsServerAsync(
+                    _serverCertificate,
+                    clientCertificateRequired: false,
+                    enabledSslProtocols: SslProtocols.Tls12,
+                    checkCertificateRevocation: false
+                );
+
+                session = _connectionManager.AddClient(tcpClient, sslStream);
+                WriteLog($"Client kết nối TLS thành công: {session.EndPoint} (ID: {session.ConnectionId}, Protocol: {sslStream.SslProtocol})");
+                OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
+
+                using (StreamReader reader = new StreamReader(sslStream, new UTF8Encoding(false), false, 1024, leaveOpen: true))
                 {
-                    while (!token.IsCancellationRequested && session.Client.Connected)
+                    while (!token.IsCancellationRequested && tcpClient.Connected)
                     {
                         string line = await reader.ReadLineAsync();
                         if (line == null)
@@ -111,24 +130,35 @@ namespace TicketBooking.Server
                     }
                 }
             }
+            catch (AuthenticationException ex)
+            {
+                WriteLog($"[{remoteEndPoint}] Bắt tay TLS thất bại (Client không hỗ trợ TLS hoặc sai giao thức): {ex.Message}");
+            }
             catch (IOException)
             {
-                WriteLog($"Client {session.EndPoint} ngắt kết nối đột ngột.");
+                WriteLog($"Client {remoteEndPoint} ngắt kết nối đột ngột.");
             }
             catch (Exception ex)
             {
-                WriteLog($"Lỗi xử lý Client {session.EndPoint}: {ex.Message}");
+                WriteLog($"Lỗi xử lý Client {remoteEndPoint}: {ex.Message}");
             }
             finally
             {
-                if (!string.IsNullOrWhiteSpace(session.UserId))
+                if (session != null)
                 {
-                    _bookingService.ReleaseSeatsByUser(session.UserId);
-                }
+                    if (!string.IsNullOrWhiteSpace(session.UserId))
+                    {
+                        _bookingService.ReleaseSeatsByUser(session.UserId);
+                    }
 
-                _connectionManager.RemoveClient(session.ConnectionId);
-                OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
-                WriteLog($"Đã đóng phiên làm việc của {session.EndPoint}.");
+                    _connectionManager.RemoveClient(session.ConnectionId);
+                    OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
+                    WriteLog($"Đã đóng phiên làm việc của {session.EndPoint}.");
+                }
+                else
+                {
+                    try { tcpClient.Close(); } catch { }
+                }
             }
         }
 

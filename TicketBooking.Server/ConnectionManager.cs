@@ -13,6 +13,7 @@ namespace TicketBooking.Server
         public string EndPoint { get; set; }
         public string UserId { get; set; }
         public TcpClient Client { get; set; }
+        public Stream SecureStream { get; set; }
         public StreamWriter Writer { get; set; }
     }
 
@@ -32,15 +33,15 @@ namespace TicketBooking.Server
             }
         }
 
-        public ClientSession AddClient(TcpClient tcpClient)
+        public ClientSession AddClient(TcpClient tcpClient, Stream stream)
         {
-            NetworkStream stream = tcpClient.GetStream();
             ClientSession session = new ClientSession
             {
                 ConnectionId = Guid.NewGuid().ToString("N").Substring(0, 8),
                 EndPoint = tcpClient.Client.RemoteEndPoint.ToString(),
                 Client = tcpClient,
-                Writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true }
+                SecureStream = stream,
+                Writer = new StreamWriter(stream, new UTF8Encoding(false), 1024, leaveOpen: true) { AutoFlush = true }
             };
 
             lock (_lock)
@@ -63,7 +64,8 @@ namespace TicketBooking.Server
 
             if (removed != null)
             {
-                try { removed.Writer.Close(); } catch { }
+                try { removed.Writer.Dispose(); } catch { }
+                try { removed.SecureStream.Close(); } catch { }
                 try { removed.Client.Close(); } catch { }
             }
         }

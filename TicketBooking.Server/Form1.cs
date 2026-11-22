@@ -31,9 +31,16 @@ namespace TicketBooking.Server
                 return;
             }
 
-            _server.Start("0.0.0.0", port);
-            btnStart.Enabled = false;
-            btnStop.Enabled = true;
+            try
+            {
+                _server.Start("0.0.0.0", port);
+                btnStart.Enabled = false;
+                btnStop.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể khởi động Server: " + ex.Message, "Lỗi TLS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnStop_Click(object sender, EventArgs e)
