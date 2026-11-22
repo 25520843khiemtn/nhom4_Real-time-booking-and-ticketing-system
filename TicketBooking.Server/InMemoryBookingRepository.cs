@@ -22,9 +22,9 @@ namespace TicketBooking.Server
 
         private void SeedSampleData()
         {
-            _users["khiem"] = "123456";
-            _users["hanh"] = "123456";
-            _users["giang"] = "123456";
+            _users["khiem"] = BCrypt.Net.BCrypt.HashPassword("123456");
+            _users["hanh"] = BCrypt.Net.BCrypt.HashPassword("123456");
+            _users["giang"] = BCrypt.Net.BCrypt.HashPassword("123456");
 
             _movies.Add(new MovieModel { MovieId = 1, Title = "Lật Mặt 8: Vòng Tay Nắng", DurationMinutes = 135, Genre = "Hành động / Gia đình" });
             _movies.Add(new MovieModel { MovieId = 2, Title = "Địa Đạo: Mặt Trời Trong Bóng Tối", DurationMinutes = 128, Genre = "Lịch sử / Chiến tranh" });
@@ -58,8 +58,8 @@ namespace TicketBooking.Server
         public bool ValidateLogin(string username, string plainPassword, out string userId)
         {
             userId = null;
-            string storedPwd;
-            if (_users.TryGetValue(username, out storedPwd) && storedPwd == plainPassword)
+            string storedHash;
+            if (_users.TryGetValue(username, out storedHash) && BCrypt.Net.BCrypt.Verify(plainPassword, storedHash))
             {
                 userId = username;
                 return true;
@@ -75,7 +75,7 @@ namespace TicketBooking.Server
                 errorMessage = "Tên đăng nhập đã tồn tại.";
                 return false;
             }
-            _users[username] = plainPassword;
+            _users[username] = BCrypt.Net.BCrypt.HashPassword(plainPassword);
             return true;
         }
 
