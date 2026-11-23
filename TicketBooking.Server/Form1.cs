@@ -33,13 +33,17 @@ namespace TicketBooking.Server
 
             try
             {
-                _server.Start("0.0.0.0", port);
+                string serverId = txtServerId.Text.Trim();
+                string peers = txtPeers.Text.Trim();
+                string sqlConn = txtSqlConn.Text.Trim();
+
+                _server.Start(serverId, "0.0.0.0", port, peers, sqlConn);
                 btnStart.Enabled = false;
                 btnStop.Enabled = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Không thể khởi động Server: " + ex.Message, "Lỗi TLS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Không thể khởi động Server: " + ex.Message, "Lỗi khởi động", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -68,6 +72,11 @@ namespace TicketBooking.Server
                 return;
             }
             lblClients.Text = $"Client đang kết nối: {count}";
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

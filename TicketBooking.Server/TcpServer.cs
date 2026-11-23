@@ -18,32 +18,44 @@ namespace TicketBooking.Server
         private TcpListener _listener;
         private CancellationTokenSource _cts;
         private X509Certificate2 _serverCertificate;
-        private readonly ConnectionManager _connectionManager;
-        private readonly BookingService _bookingService;
-        private readonly RequestHandler _requestHandler;
+        private ConnectionManager _connectionManager;
+        private BookingService _bookingService;
+        private RequestHandler _requestHandler;
+        private PeerSyncManager _peerSyncManager;
+        private string _serverId = "Server-1";
+        private readonly object _fileLock = new object();
 
         public event Action<string> OnLog;
         public event Action<int> OnClientCountChanged;
 
-        public TcpServer()
-        {
-            _connectionManager = new ConnectionManager();
-
-            IBookingRepository repository = new InMemoryBookingRepository();
-            _bookingService = new BookingService(repository, WriteLog);
-            _bookingService.OnSeatChanged += BroadcastSeatUpdate;
-
-            _requestHandler = new RequestHandler(_bookingService, WriteLog);
-        }
-
-        public void Start(string ipAddress, int port, string certPath = "server.pfx", string certPassword = "123456")
+        public void Start(string serverId, string ipAddress, int port, string peerEndpointsCsv, string sqlConnectionString = null, string certPath = "server.pfx", string certPassword = "123456")
         {
             if (!File.Exists(certPath))
             {
                 throw new FileNotFoundException($"Không tìm thấy file chứng chỉ TLS tại: {Path.GetFullPath(certPath)}");
             }
 
+            _serverId = string.IsNullOrWhiteSpace(serverId) ? "Server-1" : serverId.Trim();
             _serverCertificate = new X509Certificate2(certPath, certPassword);
+            _connectionManager = new ConnectionManager();
+
+            // Nếu có chuỗi kết nối SQL Server của Hạnh -> dùng SqlBookingRepository (hỗ trợ Multi-Server khóa mức dòng)
+            // Nếu để trống -> chạy tạm trên RAM để test nhanh
+            IBookingRepository repository = !string.IsNullOrWhiteSpace(sqlConnectionString)
+                ? (IBookingRepository)new SqlBookingRepository(sqlConnectionString.Trim())
+                : new InMemoryBookingRepository();
+
+            string[] peers = string.IsNullOrWhiteSpace(peerEndpointsCsv)
+                ? new string[0]
+                : peerEndpointsCsv.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+            _peerSyncManager = new PeerSyncManager(_serverId, peers, WriteLog);
+
+            _bookingService = new BookingService(repository, WriteLog);
+            _bookingService.OnLocalSeatChanged += HandleLocalSeatChanged;
+            _bookingService.OnRemoteSeatSynced += BroadcastSeatUpdateToClients;
+
+            _requestHandler = new RequestHandler(_bookingService, _serverId, WriteLog);
 
             IPAddress ip = string.IsNullOrWhiteSpace(ipAddress) || ipAddress == "0.0.0.0"
                 ? IPAddress.Any
@@ -53,18 +65,21 @@ namespace TicketBooking.Server
             _listener = new TcpListener(ip, port);
             _listener.Start();
 
-            WriteLog($"Server TLS 1.2 đã khởi động tại {ip}:{port}.");
+            string dbMode = !string.IsNullOrWhiteSpace(sqlConnectionString) ? "SQL Server (Shared DB)" : "In-Memory RAM";
+            WriteLog($"Node khởi động thành công tại {ip}:{port} | Chế độ DB: {dbMode} | Peers: {(peers.Length > 0 ? string.Join(", ", peers) : "None")}");
+
             Task.Run(() => AcceptLoopAsync(_cts.Token));
             Task.Run(() => _bookingService.StartTimeoutWatcherAsync(_cts.Token));
+            Task.Run(() => _peerSyncManager.StartHeartbeatLoopAsync(_cts.Token));
         }
 
         public void Stop()
         {
             if (_cts != null) _cts.Cancel();
             if (_listener != null) _listener.Stop();
-            _connectionManager.ClearAll();
+            if (_connectionManager != null) _connectionManager.ClearAll();
             OnClientCountChanged?.Invoke(0);
-            WriteLog("Server đã dừng hoạt động.");
+            WriteLog("Server Node đã dừng hoạt động.");
         }
 
         private async Task AcceptLoopAsync(CancellationToken token)
@@ -76,18 +91,9 @@ namespace TicketBooking.Server
                     TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
                     _ = Task.Run(() => HandleClientAsync(tcpClient, token));
                 }
-                catch when (token.IsCancellationRequested)
-                {
-                    break;
-                }
-                catch (ObjectDisposedException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    WriteLog($"Lỗi chấp nhận kết nối: {ex.Message}");
-                }
+                catch when (token.IsCancellationRequested) { break; }
+                catch (ObjectDisposedException) { break; }
+                catch (Exception ex) { WriteLog($"Lỗi chấp nhận kết nối: {ex.Message}"); }
             }
         }
 
@@ -107,7 +113,7 @@ namespace TicketBooking.Server
                 );
 
                 session = _connectionManager.AddClient(tcpClient, sslStream);
-                WriteLog($"Client kết nối TLS thành công: {session.EndPoint} (ID: {session.ConnectionId}, Protocol: {sslStream.SslProtocol})");
+                WriteLog($"Kết nối TLS mới: {session.EndPoint} (ID: {session.ConnectionId})");
                 OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
 
                 using (StreamReader reader = new StreamReader(sslStream, new UTF8Encoding(false), false, 1024, leaveOpen: true))
@@ -115,15 +121,8 @@ namespace TicketBooking.Server
                     while (!token.IsCancellationRequested && tcpClient.Connected)
                     {
                         string line = await reader.ReadLineAsync();
-                        if (line == null)
-                        {
-                            break;
-                        }
-
-                        if (string.IsNullOrWhiteSpace(line))
-                        {
-                            continue;
-                        }
+                        if (line == null) break;
+                        if (string.IsNullOrWhiteSpace(line)) continue;
 
                         string responseJson = _requestHandler.HandleRawMessage(line, session);
                         _connectionManager.SendToClient(session, responseJson);
@@ -132,15 +131,15 @@ namespace TicketBooking.Server
             }
             catch (AuthenticationException ex)
             {
-                WriteLog($"[{remoteEndPoint}] Bắt tay TLS thất bại (Client không hỗ trợ TLS hoặc sai giao thức): {ex.Message}");
+                WriteLog($"[{remoteEndPoint}] Bắt tay TLS thất bại: {ex.Message}");
             }
             catch (IOException)
             {
-                WriteLog($"Client {remoteEndPoint} ngắt kết nối đột ngột.");
+                WriteLog($"Kết nối {remoteEndPoint} đã đóng.");
             }
             catch (Exception ex)
             {
-                WriteLog($"Lỗi xử lý Client {remoteEndPoint}: {ex.Message}");
+                WriteLog($"Lỗi xử lý {remoteEndPoint}: {ex.Message}");
             }
             finally
             {
@@ -150,10 +149,8 @@ namespace TicketBooking.Server
                     {
                         _bookingService.ReleaseSeatsByUser(session.UserId);
                     }
-
                     _connectionManager.RemoveClient(session.ConnectionId);
                     OnClientCountChanged?.Invoke(_connectionManager.ActiveCount);
-                    WriteLog($"Đã đóng phiên làm việc của {session.EndPoint}.");
                 }
                 else
                 {
@@ -162,13 +159,21 @@ namespace TicketBooking.Server
             }
         }
 
-        private void BroadcastSeatUpdate(SeatUpdatedPayload payload)
+        private void HandleLocalSeatChanged(SeatUpdatedPayload payload)
+        {
+            BroadcastSeatUpdateToClients(payload);
+            _ = _peerSyncManager.SyncSeatToPeersAsync(payload);
+        }
+
+        private void BroadcastSeatUpdateToClients(SeatUpdatedPayload payload)
         {
             ProtocolMessage broadcastMsg = ProtocolMessage.CreateResponse(
                 MessageTypes.SEAT_UPDATED,
                 Guid.NewGuid().ToString(),
                 ResponseStatus.SUCCESS,
-                payload
+                payload,
+                null,
+                _serverId
             );
             string json = JsonConvert.SerializeObject(broadcastMsg);
             _connectionManager.Broadcast(json);
@@ -176,7 +181,20 @@ namespace TicketBooking.Server
 
         private void WriteLog(string message)
         {
-            OnLog?.Invoke($"[{DateTime.Now:HH:mm:ss}] {message}");
+            string logLine = $"[{DateTime.Now:HH:mm:ss}] [{_serverId}] {message}";
+            OnLog?.Invoke(logLine);
+
+            try
+            {
+                lock (_fileLock)
+                {
+                    string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"log_{_serverId}.txt");
+                    File.AppendAllText(logPath, logLine + Environment.NewLine, Encoding.UTF8);
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

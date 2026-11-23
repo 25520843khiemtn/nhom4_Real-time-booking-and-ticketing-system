@@ -12,6 +12,7 @@ namespace TicketBooking.Server
         private readonly List<ShowtimeModel> _showtimes = new List<ShowtimeModel>();
         private readonly List<SeatModel> _seats = new List<SeatModel>();
         private readonly List<TransactionModel> _transactions = new List<TransactionModel>();
+        private readonly object _ramLock = new object();
         private int _nextTransactionId = 1000;
         private int _nextDetailId = 5000;
 
@@ -79,59 +80,136 @@ namespace TicketBooking.Server
             return true;
         }
 
-        public List<MovieModel> GetMovies()
-        {
-            return _movies.ToList();
-        }
-
-        public List<ShowtimeModel> GetShowtimes(int movieId)
-        {
-            return _showtimes.Where(s => s.MovieId == movieId).ToList();
-        }
-
-        public ShowtimeModel GetShowtimeById(int showtimeId)
-        {
-            return _showtimes.FirstOrDefault(s => s.ShowtimeId == showtimeId);
-        }
+        public List<MovieModel> GetMovies() { return _movies.ToList(); }
+        public List<ShowtimeModel> GetShowtimes(int movieId) { return _showtimes.Where(s => s.MovieId == movieId).ToList(); }
+        public ShowtimeModel GetShowtimeById(int showtimeId) { return _showtimes.FirstOrDefault(s => s.ShowtimeId == showtimeId); }
 
         public List<SeatModel> GetSeats(int showtimeId)
         {
-            return _seats.Where(s => s.ShowtimeId == showtimeId).ToList();
+            lock (_ramLock)
+            {
+                return _seats.Where(s => s.ShowtimeId == showtimeId).Select(CloneSeat).ToList();
+            }
         }
 
         public SeatModel GetSeat(int showtimeId, string seatId)
         {
-            return _seats.FirstOrDefault(s => s.ShowtimeId == showtimeId && s.SeatId.Equals(seatId, StringComparison.OrdinalIgnoreCase));
+            lock (_ramLock)
+            {
+                SeatModel s = _seats.FirstOrDefault(x => x.ShowtimeId == showtimeId && x.SeatId.Equals(seatId, StringComparison.OrdinalIgnoreCase));
+                return s != null ? CloneSeat(s) : null;
+            }
         }
 
-        public void SaveSeatState(SeatModel seat)
+        public bool TryHoldSeat(string userId, int showtimeId, string seatId, int holdSeconds, out SeatModel resultSeat, out string errorMessage)
         {
+            resultSeat = null;
+            errorMessage = null;
+            lock (_ramLock)
+            {
+                SeatModel seat = _seats.FirstOrDefault(s => s.ShowtimeId == showtimeId && s.SeatId.Equals(seatId, StringComparison.OrdinalIgnoreCase));
+                if (seat == null) { errorMessage = $"Không tìm thấy ghế {seatId}."; return false; }
+
+                if (seat.Status == SeatStatus.Held && seat.UnlockTime.HasValue && seat.UnlockTime.Value <= DateTime.Now)
+                {
+                    seat.Status = SeatStatus.Available;
+                    seat.LockedBy = null;
+                    seat.UnlockTime = null;
+                }
+
+                if (seat.Status == SeatStatus.Sold) { errorMessage = $"Ghế {seat.SeatId} đã được bán."; return false; }
+                if (seat.Status == SeatStatus.Held)
+                {
+                    errorMessage = seat.LockedBy == userId ? $"Bạn đang giữ ghế {seat.SeatId} rồi." : $"Ghế {seat.SeatId} đang được người khác giữ.";
+                    return false;
+                }
+
+                seat.Status = SeatStatus.Held;
+                seat.LockedBy = userId;
+                seat.UnlockTime = DateTime.Now.AddSeconds(holdSeconds);
+                resultSeat = CloneSeat(seat);
+                return true;
+            }
         }
 
-        public List<SeatModel> GetAllHeldSeats()
+        public bool TryCancelHold(string userId, int showtimeId, string seatId, out SeatModel resultSeat, out string errorMessage)
         {
-            return _seats.Where(s => s.Status == SeatStatus.Held).ToList();
+            resultSeat = null;
+            errorMessage = null;
+            lock (_ramLock)
+            {
+                SeatModel seat = _seats.FirstOrDefault(s => s.ShowtimeId == showtimeId && s.SeatId.Equals(seatId, StringComparison.OrdinalIgnoreCase));
+                if (seat == null) { errorMessage = $"Không tìm thấy ghế {seatId}."; return false; }
+                if (seat.Status != SeatStatus.Held) { errorMessage = $"Ghế {seat.SeatId} hiện không ở trạng thái đang giữ."; return false; }
+                if (seat.LockedBy != userId) { errorMessage = $"Bạn không có quyền hủy giữ ghế {seat.SeatId} của người khác."; return false; }
+
+                seat.Status = SeatStatus.Available;
+                seat.LockedBy = null;
+                seat.UnlockTime = null;
+                resultSeat = CloneSeat(seat);
+                return true;
+            }
+        }
+
+        public List<SeatModel> ReleaseSeatsByUser(string userId)
+        {
+            List<SeatModel> released = new List<SeatModel>();
+            lock (_ramLock)
+            {
+                foreach (SeatModel seat in _seats.Where(s => s.Status == SeatStatus.Held && s.LockedBy == userId))
+                {
+                    seat.Status = SeatStatus.Available;
+                    seat.LockedBy = null;
+                    seat.UnlockTime = null;
+                    released.Add(CloneSeat(seat));
+                }
+            }
+            return released;
+        }
+
+        public List<SeatModel> ReleaseExpiredSeats()
+        {
+            List<SeatModel> released = new List<SeatModel>();
+            DateTime now = DateTime.Now;
+            lock (_ramLock)
+            {
+                foreach (SeatModel seat in _seats.Where(s => s.Status == SeatStatus.Held && s.UnlockTime.HasValue && s.UnlockTime.Value <= now))
+                {
+                    seat.Status = SeatStatus.Available;
+                    seat.LockedBy = null;
+                    seat.UnlockTime = null;
+                    released.Add(CloneSeat(seat));
+                }
+            }
+            return released;
         }
 
         public bool ExecuteBuyTransaction(string userId, int showtimeId, List<string> seatIds, decimal unitPrice, out TransactionModel transaction, out string errorMessage)
         {
             transaction = null;
             errorMessage = null;
-
-            List<SeatModel> targetSeats = new List<SeatModel>();
-            foreach (string id in seatIds)
+            lock (_ramLock)
             {
-                SeatModel seat = GetSeat(showtimeId, id);
-                if (seat == null)
+                DateTime now = DateTime.Now;
+                List<SeatModel> targetSeats = new List<SeatModel>();
+
+                foreach (string id in seatIds)
                 {
-                    errorMessage = $"Ghế {id} không tồn tại, giao dịch đã được hoàn tác (Rollback).";
-                    return false;
+                    SeatModel seat = _seats.FirstOrDefault(s => s.ShowtimeId == showtimeId && s.SeatId.Equals(id, StringComparison.OrdinalIgnoreCase));
+                    if (seat == null) { errorMessage = $"Ghế {id} không tồn tại."; return false; }
+                    if (seat.Status == SeatStatus.Sold) { errorMessage = $"Ghế {seat.SeatId} đã có người mua trước đó."; return false; }
+                    if (seat.Status != SeatStatus.Held || seat.LockedBy != userId) { errorMessage = $"Ghế {seat.SeatId} chưa được bạn giữ hoặc đang bị người khác giữ."; return false; }
+                    if (!seat.UnlockTime.HasValue || seat.UnlockTime.Value <= now)
+                    {
+                        seat.Status = SeatStatus.Available;
+                        seat.LockedBy = null;
+                        seat.UnlockTime = null;
+                        errorMessage = $"Ghế {seat.SeatId} đã hết thời gian giữ 5 phút.";
+                        return false;
+                    }
+                    targetSeats.Add(seat);
                 }
-                targetSeats.Add(seat);
-            }
 
-            try
-            {
                 TransactionModel tx = new TransactionModel
                 {
                     TransactionId = ++_nextTransactionId,
@@ -160,16 +238,26 @@ namespace TicketBooking.Server
                 transaction = tx;
                 return true;
             }
-            catch (Exception ex)
-            {
-                errorMessage = $"Lỗi giao dịch: {ex.Message}";
-                return false;
-            }
         }
 
         public List<TransactionModel> GetUserTransactions(string userId)
         {
-            return _transactions.Where(t => t.UserId == userId).OrderByDescending(t => t.BuyTime).ToList();
+            lock (_ramLock)
+            {
+                return _transactions.Where(t => t.UserId == userId).OrderByDescending(t => t.BuyTime).ToList();
+            }
+        }
+
+        private SeatModel CloneSeat(SeatModel source)
+        {
+            return new SeatModel
+            {
+                ShowtimeId = source.ShowtimeId,
+                SeatId = source.SeatId,
+                Status = source.Status,
+                LockedBy = source.LockedBy,
+                UnlockTime = source.UnlockTime
+            };
         }
     }
 }

@@ -18,6 +18,10 @@ namespace TicketBooking.Shared
         public const string BUY_TICKET = "BUY_TICKET";
         public const string GET_HISTORY = "GET_HISTORY";
         public const string SEAT_UPDATED = "SEAT_UPDATED";
+
+        // Protocol v2: Đồng bộ liên Server (Multi-Server)
+        public const string SERVER_SYNC_SEAT = "SERVER_SYNC_SEAT";
+        public const string SERVER_HEARTBEAT = "SERVER_HEARTBEAT";
     }
 
     public static class ResponseStatus
@@ -55,6 +59,7 @@ namespace TicketBooking.Shared
         public string MessageType { get; set; }
         public string RequestId { get; set; }
         public string UserId { get; set; }
+        public string ServerId { get; set; }
         public JToken Data { get; set; }
         public string Status { get; set; }
 
@@ -69,13 +74,14 @@ namespace TicketBooking.Shared
             return Data.ToObject<T>();
         }
 
-        public static ProtocolMessage CreateResponse(string messageType, string requestId, string status, object dataObj, string userId = null)
+        public static ProtocolMessage CreateResponse(string messageType, string requestId, string status, object dataObj, string userId = null, string serverId = null)
         {
             return new ProtocolMessage
             {
                 MessageType = messageType,
                 RequestId = requestId,
                 UserId = userId,
+                ServerId = serverId,
                 Status = status,
                 Data = dataObj != null ? JToken.FromObject(dataObj) : null
             };

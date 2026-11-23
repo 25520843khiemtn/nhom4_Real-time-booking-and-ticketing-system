@@ -12,8 +12,10 @@ namespace TicketBooking.Server
         ShowtimeModel GetShowtimeById(int showtimeId);
         List<SeatModel> GetSeats(int showtimeId);
         SeatModel GetSeat(int showtimeId, string seatId);
-        void SaveSeatState(SeatModel seat);
-        List<SeatModel> GetAllHeldSeats();
+        bool TryHoldSeat(string userId, int showtimeId, string seatId, int holdSeconds, out SeatModel resultSeat, out string errorMessage);
+        bool TryCancelHold(string userId, int showtimeId, string seatId, out SeatModel resultSeat, out string errorMessage);
+        List<SeatModel> ReleaseSeatsByUser(string userId);
+        List<SeatModel> ReleaseExpiredSeats();
         bool ExecuteBuyTransaction(string userId, int showtimeId, List<string> seatIds, decimal unitPrice, out TransactionModel transaction, out string errorMessage);
         List<TransactionModel> GetUserTransactions(string userId);
     }
