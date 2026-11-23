@@ -75,9 +75,11 @@
     </Compile>
     <Compile Include="IBookingRepository.cs" />
     <Compile Include="InMemoryBookingRepository.cs" />
+    <Compile Include="PeerSyncManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandler.cs" />
+    <Compile Include="SqlBookingRepository.cs" />
     <Compile Include="TcpServer.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
