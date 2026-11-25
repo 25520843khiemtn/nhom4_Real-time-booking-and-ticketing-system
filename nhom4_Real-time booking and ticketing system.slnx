@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="nhom4_Real-time booking and ticketing system/nhom4_Real-time booking and ticketing system.csproj" />
+  <Project Path="nhom4_Real-time booking and ticketing system/nhom4_Real-time booking and ticketing system.csproj" Id="2f2888bb-b0dc-4f3b-80e4-a253a40405f9" />
+  <Project Path="TicketBooking.LoadBalancer/TicketBooking.LoadBalancer.csproj" Id="68436062-fa0f-42a1-9eb2-7479e41a000f" />
+  <Project Path="TicketBooking.Server/TicketBooking.Server.csproj" Id="edf3361a-eee1-4e80-a34b-84a51a881a04" />
+  <Project Path="TicketBooking.Shared/TicketBooking.Shared.csproj" Id="8ba4f083-919f-4ff1-8cd4-39a8eaab0eb3" />
 </Solution>
