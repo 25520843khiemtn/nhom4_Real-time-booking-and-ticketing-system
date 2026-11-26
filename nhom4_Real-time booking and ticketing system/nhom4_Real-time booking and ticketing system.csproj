@@ -49,14 +49,76 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="FrmHistory.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FrmHistory.Designer.cs">
+      <DependentUpon>FrmHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmLogin.Designer.cs">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmMovieList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMovieList.Designer.cs">
+      <DependentUpon>FrmMovieList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmRegister.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmRegister.Designer.cs">
+      <DependentUpon>FrmRegister.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmSeatBooking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmSeatBooking.Designer.cs">
+      <DependentUpon>FrmSeatBooking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmShowtime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmShowtime.Designer.cs">
+      <DependentUpon>FrmShowtime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmShowtimeAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmShowtimeAdmin.Designer.cs">
+      <DependentUpon>FrmShowtimeAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Network\AppSession.cs" />
+    <Compile Include="Network\ClientConnection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerNode.cs" />
+    <Compile Include="ServerSession.cs" />
+    <Compile Include="StatusBarHelper.cs" />
+    <EmbeddedResource Include="FrmHistory.resx">
+      <DependentUpon>FrmHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmLogin.resx">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMovieList.resx">
+      <DependentUpon>FrmMovieList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmRegister.resx">
+      <DependentUpon>FrmRegister.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmSeatBooking.resx">
+      <DependentUpon>FrmSeatBooking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmShowtime.resx">
+      <DependentUpon>FrmShowtime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmShowtimeAdmin.resx">
+      <DependentUpon>FrmShowtimeAdmin.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

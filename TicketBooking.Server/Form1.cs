@@ -78,5 +78,11 @@ namespace TicketBooking.Server
         {
 
         }
+
+        private void btnShowtimeAdmin_Click(object sender, EventArgs e)
+        {
+            FrmShowtimeAdmin form = new FrmShowtimeAdmin();
+            form.Show();
+        }
     }
 }

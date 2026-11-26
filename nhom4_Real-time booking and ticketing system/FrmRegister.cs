@@ -10,11 +10,17 @@ using System.Windows.Forms;
 
 namespace nhom4_Real_time_booking_and_ticketing_system
 {
-    public partial class Form1 : Form
+    public partial class FrmRegister : Form
     {
-        public Form1()
+        public FrmRegister()
         {
             InitializeComponent();
+            StatusBarHelper.Attach(this, tsslServer, tsslEndpoint);
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
