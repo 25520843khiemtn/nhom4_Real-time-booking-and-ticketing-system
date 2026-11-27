@@ -41,6 +41,7 @@
             this.tsslEndpoint = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblWelcome = new System.Windows.Forms.Label();
             this.btnHistory = new System.Windows.Forms.Button();
+            this.btnAI = new System.Windows.Forms.Button();
             this.flpMovielist.SuspendLayout();
             this.pnlMoviecard.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMovie)).BeginInit();
@@ -166,7 +167,7 @@
             this.lblWelcome.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWelcome.Location = new System.Drawing.Point(510, 20);
             this.lblWelcome.Name = "lblWelcome";
-            this.lblWelcome.Size = new System.Drawing.Size(310, 32);
+            this.lblWelcome.Size = new System.Drawing.Size(180, 32);
             this.lblWelcome.TabIndex = 4;
             this.lblWelcome.Text = "Xin chào, Người dùng";
             this.lblWelcome.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -183,11 +184,26 @@
             this.btnHistory.Text = "Lịch sử mua vé";
             this.btnHistory.UseVisualStyleBackColor = false;
             // 
+            // btnAI
+            // 
+            this.btnAI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnAI.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnAI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAI.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAI.ForeColor = System.Drawing.Color.White;
+            this.btnAI.Location = new System.Drawing.Point(700, 16);
+            this.btnAI.Name = "btnAI";
+            this.btnAI.Size = new System.Drawing.Size(150, 40);
+            this.btnAI.TabIndex = 6;
+            this.btnAI.Text = "Trợ lý AI";
+            this.btnAI.UseVisualStyleBackColor = false;
+            // 
             // FrmMovieList
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
             this.ClientSize = new System.Drawing.Size(1184, 621);
+            this.Controls.Add(this.btnAI);
             this.Controls.Add(this.btnHistory);
             this.Controls.Add(this.lblWelcome);
             this.Controls.Add(this.stsMain);
@@ -227,5 +243,6 @@
         private System.Windows.Forms.ToolStripStatusLabel tsslEndpoint;
         private System.Windows.Forms.Label lblWelcome;
         private System.Windows.Forms.Button btnHistory;
+        private System.Windows.Forms.Button btnAI;
     }
 }

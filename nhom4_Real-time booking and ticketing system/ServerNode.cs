@@ -13,7 +13,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
         public int Port { get; set; }
         public string Endpoint { get { return Host + ":" + Port; } }
 
-        // ComboBox hiển thị kết quả của hàm này; thiếu nó sẽ hiện tên lớp thay vì tên Server
         public override string ToString() { return Name + " (" + Endpoint + ")"; }
     }
 

@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.pnlLoginCard = new System.Windows.Forms.Panel();
+            this.txtServerPort = new System.Windows.Forms.TextBox();
+            this.txtServerIP = new System.Windows.Forms.TextBox();
+            this.lblServerPort = new System.Windows.Forms.Label();
+            this.lblServerIp = new System.Windows.Forms.Label();
             this.lnkRegister = new System.Windows.Forms.LinkLabel();
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnLogin = new System.Windows.Forms.Button();
@@ -40,10 +44,6 @@
             this.stsMain = new System.Windows.Forms.StatusStrip();
             this.tsslServer = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslEndpoint = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lblServerIp = new System.Windows.Forms.Label();
-            this.lblServerPort = new System.Windows.Forms.Label();
-            this.txtServerIP = new System.Windows.Forms.TextBox();
-            this.txtServerPort = new System.Windows.Forms.TextBox();
             this.pnlLoginCard.SuspendLayout();
             this.stsMain.SuspendLayout();
             this.SuspendLayout();
@@ -68,6 +68,48 @@
             this.pnlLoginCard.Size = new System.Drawing.Size(390, 454);
             this.pnlLoginCard.TabIndex = 0;
             // 
+            // txtServerPort
+            // 
+            this.txtServerPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
+            this.txtServerPort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtServerPort.Location = new System.Drawing.Point(45, 293);
+            this.txtServerPort.Name = "txtServerPort";
+            this.txtServerPort.Size = new System.Drawing.Size(300, 25);
+            this.txtServerPort.TabIndex = 11;
+            this.txtServerPort.Text = "9000";
+            // 
+            // txtServerIP
+            // 
+            this.txtServerIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
+            this.txtServerIP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtServerIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtServerIP.Location = new System.Drawing.Point(45, 233);
+            this.txtServerIP.Name = "txtServerIP";
+            this.txtServerIP.Size = new System.Drawing.Size(300, 25);
+            this.txtServerIP.TabIndex = 10;
+            this.txtServerIP.Text = "127.0.0.1";
+            // 
+            // lblServerPort
+            // 
+            this.lblServerPort.AutoSize = true;
+            this.lblServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
+            this.lblServerPort.Location = new System.Drawing.Point(45, 271);
+            this.lblServerPort.Name = "lblServerPort";
+            this.lblServerPort.Size = new System.Drawing.Size(34, 19);
+            this.lblServerPort.TabIndex = 9;
+            this.lblServerPort.Text = "Port";
+            // 
+            // lblServerIp
+            // 
+            this.lblServerIp.AutoSize = true;
+            this.lblServerIp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
+            this.lblServerIp.Location = new System.Drawing.Point(45, 211);
+            this.lblServerIp.Name = "lblServerIp";
+            this.lblServerIp.Size = new System.Drawing.Size(110, 19);
+            this.lblServerIp.TabIndex = 8;
+            this.lblServerIp.Text = "IP Load Balancer";
+            // 
             // lnkRegister
             // 
             this.lnkRegister.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(165)))), ((int)(((byte)(250)))));
@@ -81,6 +123,7 @@
             this.lnkRegister.Text = "Chưa có tài khoản? Đăng ký";
             this.lnkRegister.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lnkRegister.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(165)))), ((int)(((byte)(250)))));
+            this.lnkRegister.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkRegister_LinkClicked);
             // 
             // lblMessage
             // 
@@ -183,48 +226,6 @@
             this.tsslEndpoint.Spring = true;
             this.tsslEndpoint.Text = "127.0.0.1:9000";
             this.tsslEndpoint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblServerIp
-            // 
-            this.lblServerIp.AutoSize = true;
-            this.lblServerIp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
-            this.lblServerIp.Location = new System.Drawing.Point(45, 211);
-            this.lblServerIp.Name = "lblServerIp";
-            this.lblServerIp.Size = new System.Drawing.Size(110, 19);
-            this.lblServerIp.TabIndex = 8;
-            this.lblServerIp.Text = "IP Load Balancer";
-            // 
-            // lblServerPort
-            // 
-            this.lblServerPort.AutoSize = true;
-            this.lblServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
-            this.lblServerPort.Location = new System.Drawing.Point(45, 271);
-            this.lblServerPort.Name = "lblServerPort";
-            this.lblServerPort.Size = new System.Drawing.Size(34, 19);
-            this.lblServerPort.TabIndex = 9;
-            this.lblServerPort.Text = "Port";
-            // 
-            // txtServerIP
-            // 
-            this.txtServerIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
-            this.txtServerIP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtServerIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
-            this.txtServerIP.Location = new System.Drawing.Point(45, 233);
-            this.txtServerIP.Name = "txtServerIP";
-            this.txtServerIP.Size = new System.Drawing.Size(300, 25);
-            this.txtServerIP.TabIndex = 10;
-            this.txtServerIP.Text = "127.0.0.1";
-            // 
-            // txtServerPort
-            // 
-            this.txtServerPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
-            this.txtServerPort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
-            this.txtServerPort.Location = new System.Drawing.Point(45, 293);
-            this.txtServerPort.Name = "txtServerPort";
-            this.txtServerPort.Size = new System.Drawing.Size(300, 25);
-            this.txtServerPort.TabIndex = 11;
-            this.txtServerPort.Text = "9000";
             // 
             // FrmLogin
             // 

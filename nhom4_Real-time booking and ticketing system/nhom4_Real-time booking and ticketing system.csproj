@@ -37,6 +37,7 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +50,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="FrmAI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAI.Designer.cs">
+      <DependentUpon>FrmAI.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,12 +93,6 @@
     <Compile Include="FrmShowtime.Designer.cs">
       <DependentUpon>FrmShowtime.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmShowtimeAdmin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmShowtimeAdmin.Designer.cs">
-      <DependentUpon>FrmShowtimeAdmin.cs</DependentUpon>
-    </Compile>
     <Compile Include="Network\AppSession.cs" />
     <Compile Include="Network\ClientConnection.cs" />
     <Compile Include="Program.cs" />
@@ -98,6 +100,9 @@
     <Compile Include="ServerNode.cs" />
     <Compile Include="ServerSession.cs" />
     <Compile Include="StatusBarHelper.cs" />
+    <EmbeddedResource Include="FrmAI.resx">
+      <DependentUpon>FrmAI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmHistory.resx">
       <DependentUpon>FrmHistory.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,9 +120,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmShowtime.resx">
       <DependentUpon>FrmShowtime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmShowtimeAdmin.resx">
-      <DependentUpon>FrmShowtimeAdmin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

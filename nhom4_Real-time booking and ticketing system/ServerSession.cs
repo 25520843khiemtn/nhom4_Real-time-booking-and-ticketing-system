@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace nhom4_Real_time_booking_and_ticketing_system
 {
-    // Nơi duy nhất lưu "đang kết nối Server nào"
     public static class ServerSession
     {
         public static ServerNode Current { get; private set; }

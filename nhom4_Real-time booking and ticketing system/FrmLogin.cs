@@ -15,21 +15,15 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 {
     public partial class FrmLogin : Form
     {
-        private const string SERVER_THUMBPRINT = "DD0F92848C18C81BFFDF225F3D35B253ED88EB8E";
-
         public FrmLogin()
         {
             InitializeComponent();
-
             StatusBarHelper.Attach(this, tsslServer, tsslEndpoint);
         }
 
         private void FrmLogin_Load(object sender, EventArgs e)
         {
             lblMessage.Text = "";
-
-            tsslServer.Text = "Chưa kết nối";
-            tsslEndpoint.Text = txtServerIP.Text + ":" + txtServerPort.Text;
         }
 
         private async void btnLogin_Click(object sender, EventArgs e)
@@ -37,154 +31,93 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
             string ip = txtServerIP.Text.Trim();
-            string portText = txtServerPort.Text.Trim();
+            int port;
 
-            // 1. Kiểm tra dữ liệu nhập vào.
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (username == "" || password == "")
             {
                 lblMessage.Text = "Vui lòng nhập tên đăng nhập và mật khẩu.";
                 return;
             }
-
-            int port;
-
-            if (!int.TryParse(portText, out port) || port < 1 || port > 65535)
+            if (ip == "")
+            {
+                lblMessage.Text = "Vui lòng nhập IP Load Balancer.";
+                return;
+            }
+            if (!int.TryParse(txtServerPort.Text.Trim(), out port) || port < 1 || port > 65535)
             {
                 lblMessage.Text = "Port không hợp lệ.";
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(ip))
-            {
-                lblMessage.Text = "Vui lòng nhập IP Load Balancer.";
-                return;
-            }
-
-            // 2. Khóa nút để tránh gửi nhiều yêu cầu liên tục.
             btnLogin.Enabled = false;
-            lblMessage.Text = "Đang kết nối đến Server...";
-            tsslEndpoint.Text = ip + ":" + port;
-
-            ClientConnection newConnection = null;
 
             try
             {
-                // 3. Tạo kết nối nếu chưa có kết nối đang hoạt động.
-                if (AppSession.Connection == null ||
-                    !AppSession.Connection.IsConnected)
-                {
-                    // Nếu kết nối cũ không còn hoạt động -> giải phóng
-                    AppSession.Clear();
+                lblMessage.Text = "Đang kết nối " + ip + ":" + port + "...";
+                await AppSession.EnsureConnectedAsync(ip, port);
 
-                    newConnection = new ClientConnection();
-
-                    await newConnection.ConnectAsync(
-                        ip,
-                        port,
-                        SERVER_THUMBPRINT
-                    );
-
-                    AppSession.Connection = newConnection;
-                    newConnection = null;
-
-                    tsslServer.Text = "Đã kết nối";
-                }
-
-                // 4. Kiểm tra Server bằng PING.
                 lblMessage.Text = "Đang kiểm tra Server...";
+                ProtocolMessage ping = await AppSession.Connection.SendRequestAsync(
+                    new ProtocolMessage { MessageType = MessageTypes.PING });
 
-                ProtocolMessage pingRequest = new ProtocolMessage
-                {
-                    MessageType = MessageTypes.PING
-                };
-
-                ProtocolMessage pingResponse =
-                    await AppSession.Connection.SendRequestAsync(
-                        pingRequest
-                    );
-
-                if (pingResponse.Status != ResponseStatus.SUCCESS)
-                {
+                if (ping.Status != ResponseStatus.SUCCESS)
                     throw new Exception("Server không phản hồi PING thành công.");
-                }
 
-                string pingMessage = null;
-
-                if (pingResponse.Data != null)
-                {
-                    pingMessage =
-                        pingResponse.Data["Message"]?.ToString();
-                }
-
-                if (pingMessage != "PONG")
-                {
+                string pong = ping.Data != null ? ping.Data["Message"]?.ToString() : null;
+                if (pong != "PONG")
                     throw new Exception("Phản hồi PING không hợp lệ.");
-                }
 
-                AppSession.ServerId = pingResponse.ServerId;
+                AppSession.ServerId = ping.ServerId;
 
-                // 5. Mã hóa mật khẩu theo giao thức của nhóm.
-                string encodedPassword =
-                    Base64Helper.Encode(password);
-
-                LoginPayload loginPayload = new LoginPayload
+                ServerSession.Set(new ServerNode
                 {
-                    Username = username,
-                    Password = encodedPassword
-                };
+                    Name = string.IsNullOrEmpty(ping.ServerId) ? "Server" : ping.ServerId,
+                    Host = ip,
+                    Port = port
+                }, true);
 
-                // 6. Tạo yêu cầu đăng nhập.
-                ProtocolMessage loginRequest = new ProtocolMessage
-                {
-                    MessageType = MessageTypes.LOGIN,
-                    Data = JObject.FromObject(loginPayload)
-                };
-
+                string encoded = Base64Helper.Encode(password);
                 lblMessage.Text = "Đang xác thực tài khoản...";
 
-                // 7. Gửi yêu cầu LOGIN đến Server.
-                ProtocolMessage loginResponse =
-                    await AppSession.Connection.SendRequestAsync(
-                        loginRequest
-                    );
-
-                // 8. Kiểm tra kết quả đăng nhập.
-                if (loginResponse.Status != ResponseStatus.SUCCESS)
+                ProtocolMessage resp = await AppSession.Connection.SendRequestAsync(new ProtocolMessage
                 {
-                    string errorMessage = "Đăng nhập thất bại.";
+                    MessageType = MessageTypes.LOGIN,
+                    Data = JObject.FromObject(new LoginPayload { Username = username, Password = encoded })
+                });
 
-                    if (loginResponse.Data != null)
-                    {
-                        errorMessage =
-                            loginResponse.Data["Message"]?.ToString()
-                            ?? errorMessage;
-                    }
-
-                    lblMessage.Text = errorMessage;
+                if (resp.Status != ResponseStatus.SUCCESS)
+                {
+                    string err = resp.Data != null ? resp.Data["Message"]?.ToString() : null;
+                    lblMessage.Text = err ?? "Đăng nhập thất bại.";
                     return;
                 }
 
-                // 9. Lưu thông tin phiên đăng nhập.
-                AppSession.UserId = loginResponse.UserId;
-                AppSession.ServerId = loginResponse.ServerId;
-
+                AppSession.UserId = resp.UserId;
+                AppSession.ServerId = resp.ServerId;
                 if (string.IsNullOrWhiteSpace(AppSession.UserId))
-                {
-                    throw new Exception(
-                        "Server không trả về UserId hợp lệ."
-                    );
-                }
+                    throw new Exception("Server không trả về UserId hợp lệ.");
 
-                // 10. Mở màn hình danh sách phim.
+                AppSession.RememberLogin(username, encoded);
+
                 lblMessage.Text = "Đăng nhập thành công!";
-
                 FrmMovieList next = new FrmMovieList();
 
-                // Khi đóng màn hình tiếp theo, giải phóng phiên.
                 next.FormClosed += (s, args) =>
                 {
                     AppSession.Clear();
-                    Close();
+                    ServerSession.Set(null, false);
+
+                    if (next.LoggingOut)
+                    {
+                        txtPassword.Clear();
+                        lblMessage.Text = "";
+                        btnLogin.Enabled = true;
+                        Show();
+                    }
+                    else    
+                    {
+                        Close();
+                    }
                 };
 
                 next.Show();
@@ -192,24 +125,32 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             }
             catch (Exception ex)
             {
-                // Nếu kết nối mới chưa được đưa vào AppSession, giải phóng tài nguyên của nó.
-                if (newConnection != null)
-                {
-                    newConnection.Dispose();
-                }
-
-                // Nếu kết nối đang lưu bị lỗi, đóng phiên.
                 AppSession.Clear();
-
-                tsslServer.Text = "Mất kết nối";
+                ServerSession.Set(null, false);
                 lblMessage.Text = "Lỗi: " + ex.Message;
             }
             finally
             {
-                // Chỉ bật lại nút nếu Form đăng nhập vẫn đang hiển thị.
                 if (!IsDisposed && Visible)
-                {
                     btnLogin.Enabled = true;
+            }
+        }
+
+        private void lnkRegister_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            int port;
+            int.TryParse(txtServerPort.Text.Trim(), out port);
+
+            using (FrmRegister reg = new FrmRegister(txtServerIP.Text.Trim(), port))
+            {
+                reg.ShowDialog(this);
+
+                if (reg.RegisteredUsername != null)
+                {
+                    txtUsername.Text = reg.RegisteredUsername;
+                    txtPassword.Clear();
+                    txtPassword.Focus();
+                    lblMessage.Text = "Đăng ký thành công. Hãy đăng nhập.";
                 }
             }
         }

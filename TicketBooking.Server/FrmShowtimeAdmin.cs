@@ -42,9 +42,7 @@ namespace TicketBooking.Server
             btnUpdate.Enabled = hasRow;
             btnDelete.Enabled = hasRow;
         }
-        // Trả về thông báo lỗi, hoặc null nếu hợp lệ.
-        // Kiểm tra trùng giờ trong cùng phòng cần dữ liệu thật, để người viết logic thêm sau với thông báo:
-        // "Phòng này đã có suất chiếu trùng giờ."
+
         private string ValidateInput()
         {
             if (cboMovie.SelectedIndex < 0 || cboRoom.SelectedIndex < 0)

@@ -32,21 +32,14 @@ namespace nhom4_Real_time_booking_and_ticketing_system
         private async void FrmMovieList_Load(object sender, EventArgs e)
         {
             lblWelcome.Text = "Xin chào, " + AppSession.UserId;
-
-            tsslServer.Text = "Đã kết nối";
-            tsslEndpoint.Text = "Server: " +
-                (AppSession.ServerId ?? "Chưa xác định");
-
             await LoadMoviesAsync();
         }
 
-        // Gửi yêu cầu GET_MOVIES và nhận danh sách phim.
         private async Task LoadMoviesAsync()
         {
             try
             {
-                if (AppSession.Connection == null ||
-                    !AppSession.Connection.IsConnected)
+                if (AppSession.Connection == null || !AppSession.Connection.IsConnected)
                 {
                     MessageBox.Show(
                         "Kết nối Server không còn hoạt động.",
@@ -73,7 +66,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                     MessageType = MessageTypes.GET_MOVIES
                 };
 
-                // Gửi yêu cầu qua kết nối đã đăng nhập.
                 ProtocolMessage response = await AppSession.Connection.SendRequestAsync(request);
 
                 if (response.Status != ResponseStatus.SUCCESS)
@@ -82,15 +74,12 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
                     if (response.Data != null)
                     {
-                        errorMessage =
-                            response.Data["Message"]?.ToString()
-                            ?? errorMessage;
+                        errorMessage = response.Data["Message"]?.ToString() ?? errorMessage;
                     }
 
                     throw new Exception(errorMessage);
                 }
 
-                // Chuyển dữ liệu JSON thành danh sách MovieModel.
                 List<MovieModel> movies = response.GetData<List<MovieModel>>();
 
                 flpMovielist.Controls.Clear();
@@ -107,7 +96,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                     return;
                 }
 
-                // Tạo một thẻ giao diện cho mỗi bộ phim.
                 foreach (MovieModel movie in movies)
                 {
                     if (movie != null)
@@ -138,7 +126,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             }
         }
 
-        // Tạo giao diện một thẻ phim từ dữ liệu MovieModel.
         private Panel CreateMovieCard(MovieModel movie)
         {
             Panel card = new Panel();
@@ -155,8 +142,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             picture.Size = new Size(290, 270);
             picture.SizeMode = PictureBoxSizeMode.Zoom;
 
-            // Hiện tại MovieModel chưa có dữ liệu poster, nên vùng ảnh được để trống.
-
             Label lblName = new Label();
 
             lblName.Text = movie.Title;
@@ -171,8 +156,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
             lblDuration.Text = "Thời lượng: " + movie.DurationMinutes + " phút";
 
-            lblDuration.ForeColor =
-                Color.FromArgb(156, 163, 175);
+            lblDuration.ForeColor = Color.FromArgb(156, 163, 175);
 
             lblDuration.Location = new Point(25, 338);
             lblDuration.Size = new Size(290, 24);
@@ -205,7 +189,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             btnBook.Location = new Point(25, 390);
             btnBook.Size = new Size(290, 42);
 
-            // Lưu MovieModel vào Tag để biết người dùng chọn phim nào.
             btnBook.Tag = movie;
 
             btnBook.Click += btnBookTicket_Click;
@@ -243,33 +226,23 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
             showtimeForm.Show();
         }
+        public bool LoggingOut { get; private set; }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Bạn có chắc chắn muốn đăng xuất?",
-                "Xác nhận đăng xuất",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (result != DialogResult.Yes)
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes) 
                 return;
 
-            AppSession.Clear();
-
-            FrmLogin login = new FrmLogin();
-            login.Show();
-
+            LoggingOut = true;
             Close();
         }
         private void btnHistory_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                "Chức năng lịch sử mua vé sẽ được triển khai ở bước tiếp theo.",
-                "Thông báo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            FrmHistory history = new FrmHistory();
+            Hide();
+            history.FormClosed += (s, args) => { if (!IsDisposed) Show(); };
+            history.Show();
         }
     }
 }

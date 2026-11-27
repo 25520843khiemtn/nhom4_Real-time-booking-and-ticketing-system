@@ -31,33 +31,26 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
             _selectedMovie = selectedMovie;
 
-            // Thiết lập thông tin phim được chọn.
             lblMovieName.Text = _selectedMovie.Title;
 
-            // Chưa có dữ liệu poster trong MovieModel.
             picMovie.Image = null;
 
-            // Không cho chọn ngày trong quá khứ.
             dtpShowDate.MinDate = DateTime.Today;
             dtpShowDate.Value = DateTime.Today;
 
-            // Gắn các sự kiện.
             Load += FrmShowtime_Load;
             dtpShowDate.ValueChanged += dtpShowDate_ValueChanged;
             btnBack.Click += btnBack_Click;
 
-            // Cho phép cuộn danh sách suất chiếu.
             flpShowtimes.AutoScroll = true;
             flpShowtimes.WrapContents = true;
         }
 
-        // Tải suất chiếu khi Form được mở.
         private async void FrmShowtime_Load(object sender, EventArgs e)
         {
             await LoadShowtimesAsync();
         }
 
-        // Gửi yêu cầu GET_SHOWTIMES đến Server.
         private async Task LoadShowtimesAsync()
         {
             try
@@ -124,7 +117,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             }
         }
 
-        // Hiển thị các suất chiếu thuộc ngày đang chọn.
         private void DisplayShowtimesByDate()
         {
             flpShowtimes.Controls.Clear();
@@ -164,7 +156,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             }
         }
 
-        // Tạo nút đại diện cho một suất chiếu.
         private Button CreateShowtimeButton(ShowtimeModel showtime)
         {
             Button button = new Button();
@@ -189,7 +180,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                 Environment.NewLine +
                 showtime.TicketPrice.ToString("N0") + " đ";
 
-            // Lưu dữ liệu suất chiếu vào Tag.
             button.Tag = showtime;
 
             button.Click += btnShowtime_Click;
@@ -197,13 +187,11 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             return button;
         }
 
-        // Khi người dùng chọn một ngày khác.
         private void dtpShowDate_ValueChanged(object sender, EventArgs e)
         {
             DisplayShowtimesByDate();
         }
 
-        // Khi người dùng chọn một suất chiếu.
         private void btnShowtime_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -227,7 +215,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             seatForm.Show();
         }
 
-        // Quay lại danh sách phim.
         private void btnBack_Click(object sender, EventArgs e)
         {
             Close();

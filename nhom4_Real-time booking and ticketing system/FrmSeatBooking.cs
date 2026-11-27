@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Newtonsoft.Json.Linq;
 using TicketBooking.Shared;
 using nhom4_Real_time_booking_and_ticketing_system.Network;
@@ -27,7 +26,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
         private readonly Dictionary<string, SeatState> _seatStates =
             new Dictionary<string, SeatState>();
 
-        // Lưu thời điểm hết hạn giữ của từng ghế do User hiện tại giữ.
         private readonly Dictionary<string, DateTime> _heldSeatExpiry =
             new Dictionary<string, DateTime>();
 
@@ -51,10 +49,8 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
             _selectedShowtime = selectedShowtime;
 
-            // Tạo 48 nút ghế A1 - F8.
             BuildSeatMap();
 
-            // Gắn sự kiện, tránh đăng ký trùng nếu Designer đã gắn.
             Load -= FrmSeatBooking_Load;
             Load += FrmSeatBooking_Load;
 
@@ -75,15 +71,14 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             timerHold.Tick -= timerHold_Tick;
             timerHold.Tick += timerHold_Tick;
 
-            // Nhận thông báo SEAT_UPDATED từ Server.
             if (AppSession.Connection != null)
             {
-                AppSession.Connection.MessageReceived -=
-                    Connection_MessageReceived;
+                AppSession.Connection.MessageReceived -= Connection_MessageReceived;
 
-                AppSession.Connection.MessageReceived +=
-                    Connection_MessageReceived;
+                AppSession.Connection.MessageReceived += Connection_MessageReceived;
             }
+            AppSession.Reconnected -= AppSession_Reconnected;
+            AppSession.Reconnected += AppSession_Reconnected;
 
             lblShowInfo.Text =
                 _selectedShowtime.RoomName + " - " +
@@ -298,9 +293,17 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
             SeatState state = _seatStates[seatId];
 
-            if (state == SeatState.Sold ||
-                state == SeatState.HeldByOther)
+            if (state == SeatState.Sold)
+            {
+                SetMessage("Ghế " + seatId + " đã được bán, vui lòng chọn ghế khác.");
                 return;
+            }
+
+            if (state == SeatState.HeldByOther)
+            {
+                SetMessage("Ghế " + seatId + " đang được người khác giữ. Hãy thử lại sau hoặc chọn ghế khác.");
+                return;
+            }
 
             if (state == SeatState.Mine)
             {
@@ -339,8 +342,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                         })
                 };
 
-                ProtocolMessage response =
-                    await AppSession.Connection.SendRequestAsync(request);
+                ProtocolMessage response = await AppSession.Connection.SendRequestAsync(request);
 
                 string message =
                     response.Data?["Message"]?.ToString();
@@ -349,7 +351,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                 {
                     SetMessage(message ?? "Không thể giữ ghế.");
 
-                    // Lấy lại trạng thái mới nhất từ Server.
                     await LoadSeatsAsync();
                     return;
                 }
@@ -437,7 +438,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             }
         }
 
-        // Nút hủy giữ: hủy tất cả ghế đang do User hiện tại giữ.
         private async void btnCancelHold_Click(object sender, EventArgs e)
         {
             List<string> seatIds = _heldSeatExpiry.Keys.ToList();
@@ -515,7 +515,6 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             {
                 lblCountdown.Text = "Đang xác nhận trạng thái ghế...";
 
-                // Chờ Server xác nhận ghế đã hết hạn hay chưa.
                 await LoadSeatsAsync();
                 return;
             }
@@ -528,8 +527,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
         private async void btnPayment_Click(object sender, EventArgs e)
         {
-            List<string> seatIds =
-                _heldSeatExpiry.Keys.OrderBy(s => s).ToList();
+            List<string> seatIds = _heldSeatExpiry.Keys.OrderBy(s => s).ToList();
 
             if (seatIds.Count == 0)
             {
@@ -537,8 +535,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                 return;
             }
 
-            if (AppSession.Connection == null ||
-                !AppSession.Connection.IsConnected)
+            if (AppSession.Connection == null || !AppSession.Connection.IsConnected)
             {
                 SetMessage("Mất kết nối đến Server.");
                 return;
@@ -560,15 +557,14 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                         })
                 };
 
-                ProtocolMessage response =
-                    await AppSession.Connection.SendRequestAsync(request);
+                ProtocolMessage response = await AppSession.Connection.SendRequestAsync(request);
 
-                string message =
-                    response.Data?["Message"]?.ToString();
+                string message = response.Data?["Message"]?.ToString();
 
                 if (response.Status != ResponseStatus.SUCCESS)
                 {
                     SetMessage(message ?? "Thanh toán thất bại.");
+                    MessageBox.Show(message ?? "Thanh toán thất bại.", "Mua vé thất bại", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     await LoadSeatsAsync();
                     return;
                 }
@@ -589,16 +585,15 @@ namespace nhom4_Real_time_booking_and_ticketing_system
                 UpdateSummary();
 
                 SetMessage(message ?? "Thanh toán thành công.");
-                MessageBox.Show(
-                    message ?? "Thanh toán thành công.",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show("Mua vé thành công!\n" + "Suất chiếu: " + _selectedShowtime.RoomName + " - " + _selectedShowtime.StartTime.ToString("dd/MM/yyyy HH:mm") + "\n" + "Ghế: " + string.Join(", ", seatIds) + "\n" + "Tổng tiền: " + (seatIds.Count * _selectedShowtime.TicketPrice).ToString("N0") + " VNĐ\n" + "Bạn có thể xem lại trong mục Lịch sử.", "Mua vé thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                SetMessage("Lỗi thanh toán: " + ex.Message);
-                await LoadSeatsAsync();
+                SetMessage("Mất kết nối khi thanh toán. Hệ thống đang kết nối lại.");
+                MessageBox.Show(
+                    "Kết nối bị gián đoạn trong lúc thanh toán nên chưa biết vé đã được mua hay chưa.\n" +
+                    "Sau khi kết nối lại, hãy mở mục Lịch sử để kiểm tra trước khi mua lại.",
+                    "Cần kiểm tra", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             finally
             {
@@ -610,8 +605,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
         {
             int count = _heldSeatExpiry.Count;
 
-            lblHeldSeats.Text =
-                "Số ghế đang giữ: " + count;
+            lblHeldSeats.Text = count == 0 ? "Ghế đang giữ: chưa có" : "Ghế đang giữ (" + count + "): " + string.Join(", ", _heldSeatExpiry.Keys.OrderBy(s => s));
 
             lblTotalPrice.Text =
                 "Tổng tiền: " +
@@ -637,6 +631,27 @@ namespace nhom4_Real_time_booking_and_ticketing_system
             if (lblMessage != null)
                 lblMessage.Text = message;
         }
+        private void AppSession_Reconnected()
+        {
+            if (IsDisposed || !IsHandleCreated) return;
+
+            BeginInvoke(new Action(async () =>
+            {
+                try
+                {
+                    AppSession.Connection.MessageReceived -= Connection_MessageReceived;
+                    AppSession.Connection.MessageReceived += Connection_MessageReceived;
+
+                    SetMessage("Đã kết nối lại. Đang tải lại sơ đồ ghế...");
+                    await LoadSeatsAsync();
+                    SetMessage("Đã kết nối lại. Nếu bạn đang giữ ghế, hãy chọn lại.");
+                }
+                catch (Exception ex)
+                {
+                    SetMessage("Lỗi sau khi kết nối lại: " + ex.Message);
+                }
+            }));
+        }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -645,6 +660,7 @@ namespace nhom4_Real_time_booking_and_ticketing_system
 
         private void FrmSeatBooking_FormClosed(object sender, FormClosedEventArgs e)
         {
+            AppSession.Reconnected -= AppSession_Reconnected;
             timerHold.Stop();
 
             if (AppSession.Connection != null)
