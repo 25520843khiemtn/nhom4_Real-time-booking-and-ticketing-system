@@ -1,0 +1,221 @@
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(21,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(21,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(25,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(25,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(28,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(50,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(50,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(54,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(54,50): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(65,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(65,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(79,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(79,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(82,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(82,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(83,24): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(103,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(103,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(109,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(109,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(112,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(133,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(133,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(139,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(139,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(142,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(164,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(164,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(168,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(168,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(171,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(192,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(192,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(196,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(196,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(200,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(224,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(224,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(227,24): warning CS0618: 'SqlTransaction' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(240,32): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(240,53): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(244,36): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(276,32): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(276,55): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(312,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(312,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(318,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(318,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(346,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(346,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(353,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(353,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(356,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(376,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(376,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(384,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(384,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(385,24): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(406,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(406,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(409,24): warning CS0618: 'SqlTransaction' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(418,36): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(418,57): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(422,40): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(450,32): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(450,55): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(473,36): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(473,59): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(484,36): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(484,60): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(517,20): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(517,45): warning CS0618: 'SqlConnection' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(521,24): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(521,45): warning CS0618: 'SqlCommand' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\SqlBookingRepository.cs(524,28): warning CS0618: 'SqlDataReader' is obsolete: 'Use the Microsoft.Data.SqlClient package instead.' [C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TransportTests.csproj]
+  TransportTests -> C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\bin\Debug\net8.0\TransportTests.dll
+Test run for C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\bin\Debug\net8.0\TransportTests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Failed TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "HOLD_SEAT") [689 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "ERROR"
+Actual:   "SUCCESS"
+           ↑ (pos 0)
+  Stack Trace:
+     at TransportTests.RequestHandlerTests.Correlated(ProtocolMessage response, String type, String status) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 20
+   at TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 93
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "CANCEL_HOLD") [475 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "ERROR"
+Actual:   "SUCCESS"
+           ↑ (pos 0)
+  Stack Trace:
+     at TransportTests.RequestHandlerTests.Correlated(ProtocolMessage response, String type, String status) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 20
+   at TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 93
+   at InvokeStub_RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "BUY_TICKET") [490 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "ERROR"
+Actual:   "SUCCESS"
+           ↑ (pos 0)
+  Stack Trace:
+     at TransportTests.RequestHandlerTests.Correlated(ProtocolMessage response, String type, String status) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 20
+   at TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 93
+   at InvokeStub_RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "GET_HISTORY") [474 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "ERROR"
+Actual:   "SUCCESS"
+           ↑ (pos 0)
+  Stack Trace:
+     at TransportTests.RequestHandlerTests.Correlated(ProtocolMessage response, String type, String status) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 20
+   at TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 93
+   at InvokeStub_RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed TransportTests.RequestHandlerTests.Anonymous_peer_sync_must_not_emit_remote_events [528 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at TransportTests.RequestHandlerTests.Anonymous_peer_sync_must_not_emit_remote_events() in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 118
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "HOLD_SEAT") [527 ms]
+  Error Message:
+   Newtonsoft.Json.JsonSerializationException : Error converting value "not-an-object" to type 'TicketBooking.Shared.SeatActionPayload'. Path ''.
+---- System.ArgumentException : Could not cast or convert from System.String to TicketBooking.Shared.SeatActionPayload.
+  Stack Trace:
+     at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType, JsonSerializer jsonSerializer)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject[T]()
+   at TicketBooking.Shared.ProtocolMessage.GetData[T]() in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Shared\ProtocolModels.cs:line 74
+   at TicketBooking.Server.RequestHandler.HandleHoldSeat(ProtocolMessage req, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 178
+   at TicketBooking.Server.RequestHandler.RouteRequest(ProtocolMessage req, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 96
+   at TicketBooking.Server.RequestHandler.HandleRawMessage(String rawJson, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 42
+   at TransportTests.RequestHandlerTests.Send(RequestHandler handler, ClientSession session, String type, Object data, String user) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 14
+   at TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 105
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at Newtonsoft.Json.Utilities.ConvertUtils.EnsureTypeAssignable(Object value, Type initialType, Type targetType)
+   at Newtonsoft.Json.Utilities.ConvertUtils.ConvertOrCast(Object initialValue, CultureInfo culture, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+  Failed TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "LOGIN") [484 ms]
+  Error Message:
+   Newtonsoft.Json.JsonSerializationException : Error converting value "not-an-object" to type 'TicketBooking.Shared.LoginPayload'. Path ''.
+---- System.ArgumentException : Could not cast or convert from System.String to TicketBooking.Shared.LoginPayload.
+  Stack Trace:
+     at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType, JsonSerializer jsonSerializer)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject[T]()
+   at TicketBooking.Shared.ProtocolMessage.GetData[T]() in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Shared\ProtocolModels.cs:line 74
+   at TicketBooking.Server.RequestHandler.HandleLogin(ProtocolMessage req, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 122
+   at TicketBooking.Server.RequestHandler.RouteRequest(ProtocolMessage req, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 69
+   at TicketBooking.Server.RequestHandler.HandleRawMessage(String rawJson, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 42
+   at TransportTests.RequestHandlerTests.Send(RequestHandler handler, ClientSession session, String type, Object data, String user) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 14
+   at TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 105
+   at InvokeStub_RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at Newtonsoft.Json.Utilities.ConvertUtils.EnsureTypeAssignable(Object value, Type initialType, Type targetType)
+   at Newtonsoft.Json.Utilities.ConvertUtils.ConvertOrCast(Object initialValue, CultureInfo culture, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+  Failed TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "GET_SEATS") [503 ms]
+  Error Message:
+   Newtonsoft.Json.JsonSerializationException : Error converting value "not-an-object" to type 'TicketBooking.Shared.GetSeatsPayload'. Path ''.
+---- System.ArgumentException : Could not cast or convert from System.String to TicketBooking.Shared.GetSeatsPayload.
+  Stack Trace:
+     at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType, JsonSerializer jsonSerializer)
+   at Newtonsoft.Json.Linq.JToken.ToObject(Type objectType)
+   at Newtonsoft.Json.Linq.JToken.ToObject[T]()
+   at TicketBooking.Shared.ProtocolMessage.GetData[T]() in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Shared\ProtocolModels.cs:line 74
+   at TicketBooking.Server.RequestHandler.RouteRequest(ProtocolMessage req, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 88
+   at TicketBooking.Server.RequestHandler.HandleRawMessage(String rawJson, ClientSession session) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\TicketBooking.Server\RequestHandler.cs:line 42
+   at TransportTests.RequestHandlerTests.Send(RequestHandler handler, ClientSession session, String type, Object data, String user) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 14
+   at TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(String type) in C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\RequestHandlerTests.cs:line 105
+   at InvokeStub_RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at Newtonsoft.Json.Utilities.ConvertUtils.EnsureTypeAssignable(Object value, Type initialType, Type targetType)
+   at Newtonsoft.Json.Utilities.ConvertUtils.ConvertOrCast(Object initialValue, CultureInfo culture, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+WARNING: Overwriting results file: C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TestResults\transport.trx
+Results File: C:\Users\ASUS\AppData\Local\Temp\ticket-transport-verification\Tests\TransportTests\TestResults\transport.trx
+
+Failed!  - Failed:     8, Passed:    21, Skipped:     0, Total:    29, Duration: 11 s - TransportTests.dll (net8.0)
+[xUnit.net 00:00:00.88]     TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "HOLD_SEAT") [FAIL]
+[xUnit.net 00:00:01.36]     TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "CANCEL_HOLD") [FAIL]
+[xUnit.net 00:00:01.85]     TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "BUY_TICKET") [FAIL]
+[xUnit.net 00:00:02.32]     TransportTests.RequestHandlerTests.Unauthenticated_wire_user_id_must_not_authorize_sensitive_requests(type: "GET_HISTORY") [FAIL]
+[xUnit.net 00:00:05.40]     TransportTests.RequestHandlerTests.Anonymous_peer_sync_must_not_emit_remote_events [FAIL]
+[xUnit.net 00:00:09.49]     TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "HOLD_SEAT") [FAIL]
+[xUnit.net 00:00:09.98]     TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "LOGIN") [FAIL]
+[xUnit.net 00:00:10.48]     TransportTests.RequestHandlerTests.Malformed_typed_data_returns_correlated_error_instead_of_throwing(type: "GET_SEATS") [FAIL]
